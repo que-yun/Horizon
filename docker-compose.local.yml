@@ -1,0 +1,15 @@
+services:
+  rsshub:
+    image: ghcr.io/diygod/rsshub:latest
+    container_name: horizon-rsshub
+    ports:
+      - "1200:1200"
+    environment:
+      NODE_ENV: production
+      CACHE_TYPE: memory
+      REQUEST_RETRY: ${RSSHUB_REQUEST_RETRY:-2}
+      REQUEST_TIMEOUT: ${RSSHUB_REQUEST_TIMEOUT:-15000}
+      PROXY_URI: ${RSSHUB_PROXY_URI:-}
+      PROXY_AUTH: ${RSSHUB_PROXY_AUTH:-}
+      PROXY_URL_REGEX: ${RSSHUB_PROXY_URL_REGEX:-.*}
+    restart: unless-stopped

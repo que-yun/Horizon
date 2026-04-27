@@ -38,14 +38,19 @@ ENV/
 
 # Data files (keep structure, ignore content)
 data/seen.json
+data/changedetection/
 data/summaries/*.md
 data/subscribers.json
 
 docs/_posts/*.md
 
 # Logs
+logs/changedetection.log
 logs/*.log
 *.log
+
+# Local automation runtime
+.runtime/
 
 # macOS
 .DS_Store

@@ -1,45 +1,178 @@
 #!/usr/bin/env bash
-# Horizon daily run + deploy to GitHub Pages
-# Usage: ./scripts/daily-run.sh
-# Cron:  0 8 * * * /path/to/horizon/scripts/daily-run.sh >> /path/to/horizon/logs/cron.log 2>&1
+# Horizon local daily run:
+# 1. update repo on main
+# 2. ensure local services are running
+# 3. generate the summary locally
+# 4. commit/push docs changes to main
+# 5. let GitHub Actions deploy Pages
+# 6. send a Feishu/Lark bot notification
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-LOG_PREFIX="[$(date '+%Y-%m-%d %H:%M:%S')]"
 
 cd "$PROJECT_DIR"
 
-echo "$LOG_PREFIX Starting Horizon daily run..."
+log() {
+  printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"
+}
 
-# 1. Pull latest code
-git pull --quiet origin main
+if [[ -f .env ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source .env
+  set +a
+fi
 
-# 2. Install/update dependencies
+RUN_DATE="${HORIZON_RUN_DATE:-$(date '+%Y-%m-%d')}"
+RUN_HOURS="${HORIZON_RUN_HOURS:-24}"
+REMOTE_NAME="${HORIZON_GIT_REMOTE:-origin}"
+BRANCH_NAME="${HORIZON_GIT_BRANCH:-main}"
+SUMMARY_PATH="$PROJECT_DIR/data/summaries/horizon-${RUN_DATE}-zh.md"
+POST_PATH="$PROJECT_DIR/docs/_posts/${RUN_DATE}-summary-zh.md"
+LOCK_DIR="$PROJECT_DIR/.runtime/daily-run.lock"
+STATUS="failed"
+FAILED_STEP="init"
+DETAIL_MESSAGE=""
+
+derive_pages_url() {
+  if [[ -n "${HORIZON_PAGES_URL:-}" ]]; then
+    printf '%s' "$HORIZON_PAGES_URL"
+    return 0
+  fi
+
+  local remote_url
+  remote_url="$(git remote get-url "$REMOTE_NAME" 2>/dev/null || true)"
+  if [[ -z "$remote_url" ]]; then
+    return 0
+  fi
+
+  REMOTE_URL="$remote_url" python3 - <<'PY'
+import os
+import re
+
+remote_url = os.environ.get("REMOTE_URL", "").strip()
+match = re.search(r"[:/]([^/]+)/([^/]+?)(?:\.git)?$", remote_url)
+if match:
+    owner, repo = match.group(1), match.group(2)
+    print(f"https://{owner}.github.io/{repo}/", end="")
+PY
+}
+
+notify_feishu() {
+  local status="$1"
+  local message="$2"
+  local pages_url
+
+  pages_url="$(derive_pages_url)"
+
+  "$PROJECT_DIR/.venv/bin/python" "$PROJECT_DIR/scripts/notify_feishu.py" \
+    --status "$status" \
+    --date "$RUN_DATE" \
+    --summary-path "$SUMMARY_PATH" \
+    --pages-url "$pages_url" \
+    --source-path "$POST_PATH" \
+    --message "$message" || true
+}
+
+cleanup() {
+  local exit_code="$1"
+  rm -rf "$LOCK_DIR"
+
+  if [[ "$exit_code" -ne 0 ]]; then
+    notify_feishu "failed" "${FAILED_STEP}: ${DETAIL_MESSAGE:-run failed}"
+  elif [[ "$STATUS" == "success" ]]; then
+    notify_feishu "success" "${DETAIL_MESSAGE:-本地定时任务执行成功}"
+  fi
+}
+
+trap 'cleanup $?' EXIT
+
+if [[ -d "$LOCK_DIR" ]]; then
+  log "Another daily run is already in progress."
+  exit 1
+fi
+mkdir -p "$LOCK_DIR"
+
+log "Starting Horizon local daily run..."
+
+FAILED_STEP="git-status"
+if [[ -n "$(git status --porcelain)" ]]; then
+  DETAIL_MESSAGE="git worktree is dirty, automation run aborted to avoid mixing local edits"
+  log "$DETAIL_MESSAGE"
+  exit 1
+fi
+
+FAILED_STEP="git-branch"
+CURRENT_BRANCH="$(git branch --show-current)"
+if [[ "$CURRENT_BRANCH" != "$BRANCH_NAME" ]]; then
+  DETAIL_MESSAGE="current branch is ${CURRENT_BRANCH}, expected ${BRANCH_NAME}; run automation from a dedicated clean clone/worktree on ${BRANCH_NAME}"
+  log "$DETAIL_MESSAGE"
+  exit 1
+fi
+
+FAILED_STEP="env"
+AI_KEY_ENV="$(python3 - <<'PY'
+import json
+from pathlib import Path
+
+config = json.loads(Path("data/config.json").read_text(encoding="utf-8"))
+print(config["ai"]["api_key_env"])
+PY
+)"
+if [[ -z "${AI_KEY_ENV}" || -z "${!AI_KEY_ENV:-}" ]]; then
+  DETAIL_MESSAGE="required AI credential ${AI_KEY_ENV:-<unknown>} is missing; launchd only reads values from .env or the script environment"
+  log "$DETAIL_MESSAGE"
+  exit 1
+fi
+
+FAILED_STEP="git-pull"
+log "Syncing latest code from ${REMOTE_NAME}/${BRANCH_NAME}..."
+git fetch --quiet "$REMOTE_NAME" "$BRANCH_NAME"
+git pull --ff-only --quiet "$REMOTE_NAME" "$BRANCH_NAME"
+
+FAILED_STEP="deps"
+log "Installing/updating dependencies..."
 uv sync --quiet
 
-# 3. Run Horizon
-uv run horizon --hours 24
+FAILED_STEP="rsshub"
+log "Ensuring local RSSHub is running..."
+docker compose -f docker-compose.local.yml up -d rsshub >/dev/null
 
-# 4. Deploy docs to gh-pages
-echo "$LOG_PREFIX Deploying to gh-pages..."
+FAILED_STEP="changedetection"
+log "Ensuring local changedetection.io is running..."
+./scripts/run_changedetection.sh start >/dev/null
+./.venv/bin/python scripts/sync_changedetection_sources.py --recheck >/dev/null
 
-# Use a temporary worktree to update gh-pages without switching branches
-TMPDIR=$(mktemp -d)
-trap "rm -rf $TMPDIR" EXIT
+FAILED_STEP="summary"
+log "Running Horizon summary generation..."
+uv run horizon --hours "$RUN_HOURS"
 
-git fetch origin gh-pages:gh-pages 2>/dev/null || git checkout --orphan gh-pages && git checkout main
+FAILED_STEP="verify-output"
+if [[ ! -f "$POST_PATH" ]]; then
+  DETAIL_MESSAGE="summary post not found at $POST_PATH"
+  log "$DETAIL_MESSAGE"
+  exit 1
+fi
 
-git worktree add "$TMPDIR" gh-pages
-cp -r docs/* "$TMPDIR/"
+FAILED_STEP="git-commit"
+log "Committing docs changes to ${BRANCH_NAME}..."
+git add -f "$POST_PATH"
 
-cd "$TMPDIR"
-git add -A
-git commit -m "Daily Summary: $(date '+%Y-%m-%d')" || { echo "$LOG_PREFIX Nothing to commit."; exit 0; }
-git push origin gh-pages
+if git diff --cached --quiet; then
+  DETAIL_MESSAGE="日报已生成，但 docs 无新变更，跳过提交与推送"
+  log "$DETAIL_MESSAGE"
+  STATUS="success"
+  exit 0
+fi
 
-cd "$PROJECT_DIR"
-git worktree remove "$TMPDIR"
+git commit -m "docs: daily summary ${RUN_DATE}"
 
-echo "$LOG_PREFIX Done."
+FAILED_STEP="git-push"
+log "Pushing docs changes to ${REMOTE_NAME}/${BRANCH_NAME}..."
+git push "$REMOTE_NAME" "HEAD:${BRANCH_NAME}"
+
+STATUS="success"
+DETAIL_MESSAGE="日报已生成并推送到 ${REMOTE_NAME}/${BRANCH_NAME}，GitHub Actions 将继续发布 Pages"
+log "$DETAIL_MESSAGE"

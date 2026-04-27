@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "sources": [
+    {
+      "name": "Anthropic Docs Release Notes",
+      "enabled": true,
+      "url": "https://platform.claude.com/docs/en/release-notes",
+      "tag": "anthropic-docs",
+      "config": {
+        "title": "Anthropic Docs Release Notes",
+        "fetch_backend": "html_requests",
+        "include_filters": [
+          "article#content-container"
+        ],
+        "subtractive_selectors": [
+          "button"
+        ],
+        "time_between_check_use_default": false,
+        "time_between_check": {
+          "hours": 12
+        }
+      }
+    },
+    {
+      "name": "Semantic Scholar Agent Systems Search",
+      "enabled": false,
+      "required_env": [
+        "SEMANTIC_SCHOLAR_API_KEY"
+      ],
+      "url": "https://api.semanticscholar.org/graph/v1/paper/search?query=agent%20workflow%20tool%20calling%20RAG&limit=10&fields=title,url,publicationDate,year,citationCount",
+      "tag": "semantic-scholar",
+      "config": {
+        "title": "Semantic Scholar Agent Systems Search",
+        "fetch_backend": "html_requests",
+        "processor": "text_json_diff",
+        "headers": {
+          "x-api-key": "${SEMANTIC_SCHOLAR_API_KEY}"
+        },
+        "time_between_check_use_default": false,
+        "time_between_check": {
+          "hours": 24
+        }
+      }
+    }
+  ]
+}

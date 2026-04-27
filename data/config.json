@@ -2,103 +2,146 @@
   "version": "1.0",
   "ai": {
     "provider": "openai",
-    "model": "deepseek-chat",
-    "base_url": "https://api.deepseek.com",
+    "model": "gpt-5.4",
+    "base_url": "http://127.0.0.1:15721/v1",
     "api_key_env": "OPENAI_API_KEY",
-    "temperature": 0.3,
+    "temperature": 0.2,
     "max_tokens": 8192,
     "languages": [
-      "zh",
-      "en"
+      "zh"
     ]
   },
   "sources": {
     "github": [
       {
-        "type": "user_events",
-        "username": "karpathy",
+        "type": "repo_releases",
+        "owner": "langchain-ai",
+        "repo": "langgraph",
         "enabled": true
       },
       {
         "type": "repo_releases",
-        "owner": "vllm-project",
-        "repo": "vllm",
+        "owner": "temporalio",
+        "repo": "temporal",
         "enabled": true
       },
       {
         "type": "repo_releases",
-        "owner": "sgl-project",
-        "repo": "sglang",
+        "owner": "qdrant",
+        "repo": "qdrant",
         "enabled": true
       },
       {
         "type": "repo_releases",
-        "owner": "triton-lang",
-        "repo": "triton",
+        "owner": "open-telemetry",
+        "repo": "opentelemetry-collector",
         "enabled": true
       }
     ],
     "hackernews": {
       "enabled": true,
-      "fetch_top_stories": 10,
-      "min_score": 200
+      "fetch_top_stories": 25,
+      "min_score": 80
     },
     "rss": [
       {
         "name": "Simon Willison",
         "url": "https://simonwillison.net/atom/everything/",
         "enabled": true,
-        "category": "ai-tools"
+        "category": "llm-engineering"
       },
       {
-        "name": "GitHub Trending - Daily",
-        "url": "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml",
+        "name": "Chip Huyen",
+        "url": "https://huyenchip.com/feed.xml",
         "enabled": true,
-        "category": "github-trending"
+        "category": "ai-systems"
       },
       {
-        "name": "LWN.net",
-        "url": "https://lwn.net/headlines/full_text?key=${LWN_KEY}",
+        "name": "Lilian Weng",
+        "url": "https://lilianweng.github.io/index.xml",
         "enabled": true,
-        "category": "linux-kernel"
+        "category": "ai-research"
+      },
+      {
+        "name": "Latent Space",
+        "url": "https://www.latent.space/feed",
+        "enabled": true,
+        "category": "ai-products"
+      },
+      {
+        "name": "OpenAI News",
+        "url": "https://openai.com/news/rss.xml",
+        "enabled": true,
+        "category": "official-updates"
+      },
+      {
+        "name": "OpenAI Developers",
+        "url": "https://developers.openai.com/rss.xml",
+        "enabled": true,
+        "category": "official-openai"
+      },
+      {
+        "name": "OpenAI Cookbook Commits",
+        "url": "https://github.com/openai/openai-cookbook/commits/main.atom",
+        "enabled": true,
+        "category": "official-openai"
+      },
+      {
+        "name": "Go Blog",
+        "url": "https://go.dev/blog/feed.atom",
+        "enabled": true,
+        "category": "go-backend"
+      },
+      {
+        "name": "Anthropic Engineering (RSSHub)",
+        "url": "http://127.0.0.1:1200/anthropic/engineering",
+        "enabled": true,
+        "category": "official-updates"
+      },
+      {
+        "name": "Anthropic Research (RSSHub)",
+        "url": "http://127.0.0.1:1200/anthropic/research",
+        "enabled": true,
+        "category": "official-updates"
+      },
+      {
+        "name": "Anthropic Docs Release Notes (ChangeDetection)",
+        "url": "http://127.0.0.1:15000/rss?token=${CHANGEDETECTION_RSS_TOKEN}&tag=anthropic-docs",
+        "enabled": true,
+        "category": "official-updates"
+      },
+      {
+        "name": "Hugging Face Daily Papers (RSSHub)",
+        "url": "http://127.0.0.1:1200/huggingface/daily-papers/week/50",
+        "enabled": true,
+        "category": "papers"
+      },
+      {
+        "name": "arXiv AI/LLM",
+        "url": "https://export.arxiv.org/api/query?search_query=cat:cs.AI+OR+cat:cs.CL+OR+cat:cs.LG&sortBy=lastUpdatedDate&sortOrder=descending&start=0&max_results=20",
+        "enabled": true,
+        "category": "papers"
+      },
+      {
+        "name": "Semantic Scholar Agent Systems (ChangeDetection)",
+        "url": "http://127.0.0.1:15000/rss?token=${CHANGEDETECTION_RSS_TOKEN}&tag=semantic-scholar",
+        "enabled": false,
+        "category": "papers"
       }
     ],
     "reddit": {
-      "enabled": true,
-      "subreddits": [
-        {
-          "subreddit": "MachineLearning",
-          "enabled": true,
-          "sort": "hot",
-          "time_filter": "day",
-          "fetch_limit": 15,
-          "min_score": 60
-        },
-        {
-          "subreddit": "LocalLLaMA",
-          "enabled": true,
-          "sort": "hot",
-          "time_filter": "day",
-          "fetch_limit": 15,
-          "min_score": 60
-        }
-      ],
+      "enabled": false,
+      "subreddits": [],
       "users": [],
-      "fetch_comments": 10
+      "fetch_comments": 3
     },
     "telegram": {
-      "enabled": true,
-      "channels": [
-        {
-          "channel": "zaihuapd",
-          "enabled": true,
-          "fetch_limit": 20
-        }
-      ]
+      "enabled": false,
+      "channels": []
     }
   },
   "filtering": {
-    "ai_score_threshold": 7.0,
+    "ai_score_threshold": 6.8,
     "time_window_hours": 24
   },
   "webhook": {

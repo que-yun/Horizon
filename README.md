@@ -7,8 +7,8 @@
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](LICENSE)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json&style=flat-square)](https://github.com/astral-sh/uv)
-[![Daily Summary](https://github.com/Thysrael/Horizon/actions/workflows/deploy-docs.yml/badge.svg?style=flat-square)](https://thysrael.github.io/Horizon/)
-[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Thysrael/Horizon?style=flat-square)](https://github.com/Thysrael/Horizon/commits/main)
+[![Daily Summary](https://github.com/que-yun/Horizon/actions/workflows/deploy-docs.yml/badge.svg?style=flat-square)](https://que-yun.github.io/Horizon/)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/que-yun/Horizon?style=flat-square)](https://github.com/que-yun/Horizon/commits/main)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 ![Sources Welcome](https://img.shields.io/badge/📡_sources-welcome-f97316?style=flat-square)
 <br>
@@ -23,7 +23,7 @@
 
 📡 Your own AI-powered news radar. Generates daily briefings in English & Chinese. | 构建你专属的 AI 新闻雷达
 
-[📖 Live Demo](https://thysrael.github.io/Horizon/) · [📋 Configuration Guide](https://thysrael.github.io/Horizon/configuration) · [简体中文](README_zh.md)
+[📖 Live Demo](https://que-yun.github.io/Horizon/) · [📋 Configuration Guide](https://que-yun.github.io/Horizon/configuration) · [简体中文](README_zh.md)
 
 </div>
 
@@ -167,7 +167,7 @@ flowchart LR
 **Option A: Local Installation**
 
 ```bash
-git clone https://github.com/Thysrael/Horizon.git
+git clone https://github.com/que-yun/Horizon.git
 cd horizon
 
 # Install with uv (recommended)
@@ -180,7 +180,7 @@ pip install -e .
 **Option B: Docker**
 
 ```bash
-git clone https://github.com/Thysrael/Horizon.git
+git clone https://github.com/que-yun/Horizon.git
 cd horizon
 
 # Configure environment
