@@ -53,10 +53,10 @@ sync_dependencies() {
 run_horizon() {
   local uv_bin="$1"
   if [[ -n "$uv_bin" ]]; then
-    "$uv_bin" run horizon --hours "$RUN_HOURS"
+    HORIZON_RUN_DATE="$RUN_DATE" "$uv_bin" run horizon --hours "$RUN_HOURS"
     return 0
   fi
-  "$VENV_BIN/horizon" --hours "$RUN_HOURS"
+  HORIZON_RUN_DATE="$RUN_DATE" "$VENV_BIN/horizon" --hours "$RUN_HOURS"
 }
 
 ensure_rsshub() {

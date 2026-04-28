@@ -17,9 +17,9 @@ class ContentLocalizer:
 
     def __init__(self, ai_client: AIClient):
         self.client = ai_client
-        self.localization_timeout = float(os.getenv("HORIZON_LOCALIZATION_TIMEOUT_SECONDS", "20"))
-        self.localization_max_tokens = int(os.getenv("HORIZON_LOCALIZATION_MAX_TOKENS", "1800"))
-        self.batch_size = int(os.getenv("HORIZON_LOCALIZATION_BATCH_SIZE", "6"))
+        self.localization_timeout = float(os.getenv("HORIZON_LOCALIZATION_TIMEOUT_SECONDS", "30"))
+        self.localization_max_tokens = int(os.getenv("HORIZON_LOCALIZATION_MAX_TOKENS", "1200"))
+        self.batch_size = int(os.getenv("HORIZON_LOCALIZATION_BATCH_SIZE", "3"))
 
     async def localize_items(self, items: List[ContentItem], language: str) -> None:
         """Populate localized fallback fields in-place.
@@ -46,6 +46,12 @@ class ContentLocalizer:
                     await self._localize_batch(batch)
                 except Exception as e:
                     print(f"Error localizing batch starting at {start}: {e}")
+                    if len(batch) > 1:
+                        for item in batch:
+                            try:
+                                await self._localize_batch([item])
+                            except Exception as single_error:
+                                print(f"Error localizing item {item.id}: {single_error}")
                 progress.advance(task, len(batch))
 
     async def _localize_batch(self, items: List[ContentItem]) -> None:
@@ -57,14 +63,12 @@ class ContentLocalizer:
                 or item.metadata.get("detailed_summary")
                 or item.ai_summary
                 or item.title
-            )
-            reason = str(item.ai_reason or "")
+            )[:600]
             tags = ", ".join(item.ai_tags) if item.ai_tags else ""
             lines.append(
                 f"[{index}]\n"
                 f"Title: {title}\n"
                 f"Summary: {summary}\n"
-                f"Reason: {reason}\n"
                 f"Tags: {tags}"
             )
 
