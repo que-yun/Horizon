@@ -11,7 +11,6 @@ import re
 import sys
 import os
 from typing import List, Optional
-from tenacity import retry, stop_after_attempt, wait_exponential
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, MofNCompleteColumn
 from ddgs import DDGS
 
@@ -129,10 +128,6 @@ class ContentEnricher:
         except Exception:
             return []
 
-    @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(min=2, max=10)
-    )
     async def _enrich_item(self, item: ContentItem) -> None:
         """Enrich a single item with background knowledge.
 
