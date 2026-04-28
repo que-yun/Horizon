@@ -1,7 +1,7 @@
 """Content analysis using AI."""
 
-import json
-import re
+import asyncio
+import os
 from typing import List, Optional
 from tenacity import retry, stop_after_attempt, wait_exponential
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, MofNCompleteColumn
@@ -17,6 +17,8 @@ class ContentAnalyzer:
 
     def __init__(self, ai_client: AIClient):
         self.client = ai_client
+        self.analysis_timeout = float(os.getenv("HORIZON_ANALYSIS_TIMEOUT_SECONDS", "20"))
+        self.analysis_max_tokens = int(os.getenv("HORIZON_ANALYSIS_MAX_TOKENS", "600"))
 
     @staticmethod
     def _parse_json_response(response: str) -> Optional[dict]:
@@ -123,9 +125,13 @@ class ContentAnalyzer:
         )
 
         # Get AI completion
-        response = await self.client.complete(
-            system=CONTENT_ANALYSIS_SYSTEM,
-            user=user_prompt,
+        response = await asyncio.wait_for(
+            self.client.complete(
+                system=CONTENT_ANALYSIS_SYSTEM,
+                user=user_prompt,
+                max_tokens=self.analysis_max_tokens,
+            ),
+            timeout=self.analysis_timeout,
         )
 
         # Parse JSON response with robust fallback

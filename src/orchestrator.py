@@ -1,6 +1,7 @@
 """Main orchestrator coordinating the entire workflow."""
 
 import asyncio
+import os
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from typing import List, Dict
@@ -445,9 +446,15 @@ class HorizonOrchestrator:
 
         try:
             ai_client = create_ai_client(self.config.ai)
-            response = await ai_client.complete(
-                system=TOPIC_DEDUP_SYSTEM,
-                user=TOPIC_DEDUP_USER.format(items=items_text),
+            dedup_timeout = float(os.getenv("HORIZON_TOPIC_DEDUP_TIMEOUT_SECONDS", "20"))
+            dedup_max_tokens = int(os.getenv("HORIZON_TOPIC_DEDUP_MAX_TOKENS", "1200"))
+            response = await asyncio.wait_for(
+                ai_client.complete(
+                    system=TOPIC_DEDUP_SYSTEM,
+                    user=TOPIC_DEDUP_USER.format(items=items_text),
+                    max_tokens=dedup_max_tokens,
+                ),
+                timeout=dedup_timeout,
             )
             result = parse_json_response(response)
             if result is None:
