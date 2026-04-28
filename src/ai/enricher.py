@@ -5,6 +5,7 @@ For items that pass the score threshold, this module:
 2. Feeds search results + item content to AI to generate grounded background knowledge
 """
 
+import asyncio
 import json
 import re
 import sys
@@ -28,6 +29,9 @@ class ContentEnricher:
 
     def __init__(self, ai_client: AIClient):
         self.client = ai_client
+        self.web_search_timeout = float(os.getenv("HORIZON_WEB_SEARCH_TIMEOUT_SECONDS", "12"))
+        self.concept_timeout = float(os.getenv("HORIZON_CONCEPT_TIMEOUT_SECONDS", "30"))
+        self.enrich_timeout = float(os.getenv("HORIZON_ENRICH_TIMEOUT_SECONDS", "45"))
 
     async def enrich_batch(self, items: List[ContentItem]) -> None:
         """Enrich items in-place with background knowledge.
@@ -51,12 +55,7 @@ class ContentEnricher:
                     print(f"Error enriching item {item.id}: {e}")
                 progress.advance(task)
 
-    async def _web_search(self, query: str, max_results: int = 3) -> list:
-        """Search the web for context via DuckDuckGo.
-
-        Returns:
-            List of dicts with keys: title, url, body
-        """
+    def _web_search_sync(self, query: str, max_results: int = 3) -> list:
         try:
             # Suppress primp "Impersonate ... does not exist" stderr warning
             stderr = sys.stderr
@@ -74,6 +73,20 @@ class ContentEnricher:
             {"title": r.get("title", ""), "url": r.get("href", ""), "body": r.get("body", "")}
             for r in (results or [])
         ]
+
+    async def _web_search(self, query: str, max_results: int = 3) -> list:
+        """Search the web for context via DuckDuckGo.
+
+        Returns:
+            List of dicts with keys: title, url, body
+        """
+        try:
+            return await asyncio.wait_for(
+                asyncio.to_thread(self._web_search_sync, query, max_results),
+                timeout=self.web_search_timeout,
+            )
+        except Exception:
+            return []
 
     @staticmethod
     def _parse_json_response(response: str) -> Optional[dict]:
@@ -101,9 +114,12 @@ class ContentEnricher:
         )
 
         try:
-            response = await self.client.complete(
-                system=CONCEPT_EXTRACTION_SYSTEM,
-                user=user_prompt,
+            response = await asyncio.wait_for(
+                self.client.complete(
+                    system=CONCEPT_EXTRACTION_SYSTEM,
+                    user=user_prompt,
+                ),
+                timeout=self.concept_timeout,
             )
             result = self._parse_json_response(response)
             if result is None:
@@ -169,9 +185,12 @@ class ContentEnricher:
             web_context=web_context or "No web search results available.",
         )
 
-        response = await self.client.complete(
-            system=CONTENT_ENRICHMENT_SYSTEM,
-            user=user_prompt,
+        response = await asyncio.wait_for(
+            self.client.complete(
+                system=CONTENT_ENRICHMENT_SYSTEM,
+                user=user_prompt,
+            ),
+            timeout=self.enrich_timeout,
         )
 
         # Parse JSON response with robust fallback
