@@ -28,9 +28,11 @@ class ContentEnricher:
 
     def __init__(self, ai_client: AIClient):
         self.client = ai_client
-        self.web_search_timeout = float(os.getenv("HORIZON_WEB_SEARCH_TIMEOUT_SECONDS", "12"))
-        self.concept_timeout = float(os.getenv("HORIZON_CONCEPT_TIMEOUT_SECONDS", "30"))
-        self.enrich_timeout = float(os.getenv("HORIZON_ENRICH_TIMEOUT_SECONDS", "45"))
+        self.web_search_timeout = float(os.getenv("HORIZON_WEB_SEARCH_TIMEOUT_SECONDS", "8"))
+        self.concept_timeout = float(os.getenv("HORIZON_CONCEPT_TIMEOUT_SECONDS", "15"))
+        self.enrich_timeout = float(os.getenv("HORIZON_ENRICH_TIMEOUT_SECONDS", "20"))
+        self.concept_max_tokens = int(os.getenv("HORIZON_CONCEPT_MAX_TOKENS", "300"))
+        self.enrich_max_tokens = int(os.getenv("HORIZON_ENRICH_MAX_TOKENS", "1200"))
 
     async def enrich_batch(self, items: List[ContentItem]) -> None:
         """Enrich items in-place with background knowledge.
@@ -117,6 +119,7 @@ class ContentEnricher:
                 self.client.complete(
                     system=CONCEPT_EXTRACTION_SYSTEM,
                     user=user_prompt,
+                    max_tokens=self.concept_max_tokens,
                 ),
                 timeout=self.concept_timeout,
             )
@@ -184,6 +187,7 @@ class ContentEnricher:
             self.client.complete(
                 system=CONTENT_ENRICHMENT_SYSTEM,
                 user=user_prompt,
+                max_tokens=self.enrich_max_tokens,
             ),
             timeout=self.enrich_timeout,
         )

@@ -510,10 +510,23 @@ class HorizonOrchestrator:
             return
 
         self.console.print("📚 Enriching with background knowledge...")
+        max_enrich_items = int(os.getenv("HORIZON_MAX_ENRICH_ITEMS", "8"))
+        items_to_enrich = items[:max_enrich_items] if max_enrich_items > 0 else []
+        skipped_count = max(0, len(items) - len(items_to_enrich))
+
+        if skipped_count:
+            self.console.print(
+                f"   [dim]Only enriching top {len(items_to_enrich)} items to keep the daily run bounded; "
+                f"{skipped_count} lower-ranked items will keep their AI summary only.[/dim]"
+            )
+
+        if not items_to_enrich:
+            return
+
         ai_client = create_ai_client(self.config.ai)
         enricher = ContentEnricher(ai_client)
-        await enricher.enrich_batch(items)
-        self.console.print(f"   Enriched {len(items)} items\n")
+        await enricher.enrich_batch(items_to_enrich)
+        self.console.print(f"   Enriched {len(items_to_enrich)} items\n")
 
     async def _analyze_content(self, items: List[ContentItem]) -> List[ContentItem]:
         """Analyze content items with AI.
