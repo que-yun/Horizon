@@ -22,6 +22,7 @@ from .ai.client import create_ai_client
 from .ai.analyzer import ContentAnalyzer
 from .ai.summarizer import DailySummarizer
 from .ai.enricher import ContentEnricher
+from .ai.localizer import ContentLocalizer
 from .ai.tokens import get_usage_snapshot
 
 
@@ -116,6 +117,9 @@ class HorizonOrchestrator:
             # 6. Search related stories + enrich with background knowledge (2nd AI pass)
             await self._enrich_important_items(important_items)
 
+            # 6.5 Add localized fallback fields so non-English pages stay readable
+            await self._localize_important_items(important_items)
+
             # 7. Generate and save daily summaries for each configured language
             today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
             for lang in self.config.ai.languages:
@@ -137,10 +141,15 @@ class HorizonOrchestrator:
                     dest_path = posts_dir / post_filename
 
                     # Add Jekyll front matter
+                    page_title = (
+                        f"Horizon 每日速递：{today}"
+                        if lang == "zh"
+                        else f"Horizon Summary: {today} ({lang.upper()})"
+                    )
                     front_matter = (
                         "---\n"
                         "layout: default\n"
-                        f"title: \"Horizon Summary: {today} ({lang.upper()})\"\n"
+                        f"title: \"{page_title}\"\n"
                         f"date: {today}\n"
                         f"lang: {lang}\n"
                         "---\n\n"
@@ -527,6 +536,19 @@ class HorizonOrchestrator:
         enricher = ContentEnricher(ai_client)
         await enricher.enrich_batch(items_to_enrich)
         self.console.print(f"   Enriched {len(items_to_enrich)} items\n")
+
+    async def _localize_important_items(self, items: List[ContentItem]) -> None:
+        """Add localized fallback fields for configured non-English outputs."""
+        target_languages = [lang for lang in self.config.ai.languages if lang != "en"]
+        if not items or not target_languages:
+            return
+
+        ai_client = create_ai_client(self.config.ai)
+        localizer = ContentLocalizer(ai_client)
+        for lang in target_languages:
+            self.console.print(f"🈶 Filling localized fallback fields for {lang.upper()} pages...")
+            await localizer.localize_items(items, lang)
+            self.console.print(f"   Localized fallback fields ready for {lang.upper()}\n")
 
     async def _analyze_content(self, items: List[ContentItem]) -> List[ContentItem]:
         """Analyze content items with AI.

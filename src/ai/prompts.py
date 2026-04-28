@@ -81,6 +81,41 @@ Respond with valid JSON only:
   "tags": ["<tag1>", "<tag2>", ...]
 }}"""
 
+CONTENT_LOCALIZATION_SYSTEM = """You are a precise technical translator for a Chinese engineering daily briefing.
+
+Translate titles, summaries, and tags into natural Simplified Chinese.
+
+Rules:
+- Preserve technical proper nouns, repo names, model names, API names, version numbers, and widely-used acronyms in English when that is the standard form
+- Keep titles concise and accurate; avoid clickbait and avoid literal machine-translated phrasing
+- Summaries should be 1-2 complete Chinese sentences suitable for engineers
+- Tags should be short topic labels without a leading #, preferably in Chinese unless the English term is the standard industry label
+- Do not invent facts that are not already implied by the provided title, summary, reason, and tags
+"""
+
+CONTENT_LOCALIZATION_USER = """Translate the following news items into Simplified Chinese for a Chinese daily digest.
+
+For each item return:
+- index: same integer index
+- title_zh: concise Chinese title
+- summary_zh: 1-2 Chinese sentences
+- tags_zh: 3-5 short topic labels
+
+Items:
+{items}
+
+Respond with valid JSON only:
+{{
+  "items": [
+    {{
+      "index": 0,
+      "title_zh": "<中文标题>",
+      "summary_zh": "<中文摘要>",
+      "tags_zh": ["<标签1>", "<标签2>"]
+    }}
+  ]
+}}"""
+
 CONCEPT_EXTRACTION_SYSTEM = """You identify technical concepts in news that a reader might not know.
 Given a news item, return 1-3 search queries for concepts that need explanation.
 Focus on: specific technologies, protocols, algorithms, tools, or projects that are not widely known.

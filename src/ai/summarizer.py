@@ -56,6 +56,25 @@ LABELS = {
     },
 }
 
+SOURCE_LABELS = {
+    "en": {
+        "github": "GitHub",
+        "hackernews": "Hacker News",
+        "rss": "RSS",
+        "reddit": "Reddit",
+        "telegram": "Telegram",
+        "unknown": "unknown",
+    },
+    "zh": {
+        "github": "GitHub",
+        "hackernews": "Hacker News",
+        "rss": "RSS",
+        "reddit": "Reddit",
+        "telegram": "Telegram",
+        "unknown": "未知",
+    },
+}
+
 
 class DailySummarizer:
     """Generates daily Markdown summaries from pre-analyzed content items."""
@@ -88,9 +107,14 @@ class DailySummarizer:
         if not items:
             return self._generate_empty_summary(date, total_fetched, labels)
 
+        lead = (
+            f"> 从 {total_fetched} 条内容中筛选出 {len(items)} 条重要资讯\n\n"
+            if language == "zh"
+            else f"> From {total_fetched} items, {len(items)} important content pieces were selected\n\n"
+        )
         header = (
             f"# {labels['header']} - {date}\n\n"
-            f"> From {total_fetched} items, {len(items)} important content pieces were selected\n\n"
+            f"{lead}"
             "---\n\n"
         )
 
@@ -176,6 +200,9 @@ class DailySummarizer:
             or meta.get("community_discussion")
             or ""
         )
+        tags = meta.get(f"tags_{language}") if language == "zh" else None
+        if not tags:
+            tags = item.ai_tags
 
         if language == "zh":
             title = _pangu(title)
@@ -184,17 +211,19 @@ class DailySummarizer:
             discussion = _pangu(discussion)
 
         # Source line with parts joined by " · ", link appended at end
-        source_type = item.source_type.value
+        source_type = SOURCE_LABELS.get(language, SOURCE_LABELS["en"]).get(
+            item.source_type.value,
+            item.source_type.value,
+        )
         source_parts = [source_type]
         if meta.get("subreddit"):
             source_parts.append(f"r/{meta['subreddit']}")
         if meta.get("feed_name"):
             source_parts.append(meta["feed_name"])
         else:
-            source_parts.append(item.author or "unknown")
+            source_parts.append(item.author or SOURCE_LABELS.get(language, SOURCE_LABELS["en"])["unknown"])
         if item.published_at:
-            day = item.published_at.strftime("%d").lstrip("0")
-            source_parts.append(item.published_at.strftime(f"%b {day}, %H:%M"))
+            source_parts.append(self._format_timestamp(item.published_at, language))
         source_line = " \u00b7 ".join(source_parts)  # ·
 
         lines = [
@@ -222,8 +251,8 @@ class DailySummarizer:
             lines.append("")
             lines.append(f"**{labels['discussion']}**: {discussion}")
 
-        if item.ai_tags:
-            tags_str = ", ".join([f"`#{t}`" for t in item.ai_tags])
+        if tags:
+            tags_str = ", ".join([f"`#{t}`" for t in tags])
             lines.append("")
             lines.append(f"**{labels['tags']}**: {tags_str}")
 
@@ -234,8 +263,22 @@ class DailySummarizer:
 
     def _generate_empty_summary(self, date: str, total_fetched: int, labels: dict) -> str:
         """Generate summary when no high-scoring items were found."""
+        lead = (
+            f"已分析 {total_fetched} 条内容，但没有条目达到当前重要性阈值。\n\n"
+            if labels is LABELS["zh"]
+            else f"Analyzed {total_fetched} items, but none met the importance threshold.\n\n"
+        )
         return (
             f"# {labels['header']} - {date}\n\n"
-            f"> Analyzed {total_fetched} items, but none met the importance threshold.\n\n"
+            f"> {lead}"
             + labels["empty_body"]
         )
+
+    @staticmethod
+    def _format_timestamp(published_at, language: str) -> str:
+        if language == "zh":
+            month = str(int(published_at.strftime("%m")))
+            day = str(int(published_at.strftime("%d")))
+            return published_at.strftime(f"{month}月{day}日 %H:%M")
+        day = published_at.strftime("%d").lstrip("0")
+        return published_at.strftime(f"%b {day}, %H:%M")
