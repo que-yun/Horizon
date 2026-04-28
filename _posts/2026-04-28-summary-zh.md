@@ -16,10 +16,10 @@ lang: zh
 <a id="item-1"></a>
 ## [GTFOBins](https://gtfobins.org/) ⭐️ 8.0/10
 
-GTFOBins is a curated catalog of Unix binaries that can be leveraged to bypass restrictions, escalate privileges, or gain shell access in security and misconfiguration scenarios.
+GTFOBins is a curated catalog of Unix binaries that can be abused to bypass restrictions, escalate privileges, or spawn shells in security and system administration contexts.
 
 hackernews · StefanBatory · Apr 28, 06:27
 
-**标签**: `#security`, `#linux`, `#privilege-escalation`, `#red-team`, `#ctf`
+**标签**: `#security`, `#privilege-escalation`, `#linux`, `#pentesting`, `#ctf`
 
 ---
