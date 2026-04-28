@@ -11,11 +11,46 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+VENV_BIN="$PROJECT_DIR/.venv/bin"
 
 cd "$PROJECT_DIR"
 
 log() {
   printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"
+}
+
+resolve_uv() {
+  if command -v uv >/dev/null 2>&1; then
+    command -v uv
+    return 0
+  fi
+  if [[ -x "$HOME/.local/bin/uv" ]]; then
+    printf '%s\n' "$HOME/.local/bin/uv"
+    return 0
+  fi
+  if [[ -x "/opt/homebrew/bin/uv" ]]; then
+    printf '%s\n' "/opt/homebrew/bin/uv"
+    return 0
+  fi
+  return 1
+}
+
+sync_dependencies() {
+  local uv_bin="$1"
+  if [[ -n "$uv_bin" ]]; then
+    "$uv_bin" sync --quiet
+    return 0
+  fi
+  "$VENV_BIN/pip" install -e . >/dev/null
+}
+
+run_horizon() {
+  local uv_bin="$1"
+  if [[ -n "$uv_bin" ]]; then
+    "$uv_bin" run horizon --hours "$RUN_HOURS"
+    return 0
+  fi
+  "$VENV_BIN/horizon" --hours "$RUN_HOURS"
 }
 
 if [[ -f .env ]]; then
@@ -32,9 +67,14 @@ BRANCH_NAME="${HORIZON_GIT_BRANCH:-main}"
 SUMMARY_PATH="$PROJECT_DIR/data/summaries/horizon-${RUN_DATE}-zh.md"
 POST_PATH="$PROJECT_DIR/docs/_posts/${RUN_DATE}-summary-zh.md"
 LOCK_DIR="$PROJECT_DIR/.runtime/daily-run.lock"
+UV_BIN="${HORIZON_UV_BIN:-}"
 STATUS="failed"
 FAILED_STEP="init"
 DETAIL_MESSAGE=""
+
+if [[ -z "$UV_BIN" ]]; then
+  UV_BIN="$(resolve_uv || true)"
+fi
 
 derive_pages_url() {
   if [[ -n "${HORIZON_PAGES_URL:-}" ]]; then
@@ -134,7 +174,7 @@ git pull --ff-only --quiet "$REMOTE_NAME" "$BRANCH_NAME"
 
 FAILED_STEP="deps"
 log "Installing/updating dependencies..."
-uv sync --quiet
+sync_dependencies "$UV_BIN"
 
 FAILED_STEP="rsshub"
 log "Ensuring local RSSHub is running..."
@@ -147,7 +187,7 @@ log "Ensuring local changedetection.io is running..."
 
 FAILED_STEP="summary"
 log "Running Horizon summary generation..."
-uv run horizon --hours "$RUN_HOURS"
+run_horizon "$UV_BIN"
 
 FAILED_STEP="verify-output"
 if [[ ! -f "$POST_PATH" ]]; then
