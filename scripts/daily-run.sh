@@ -53,6 +53,22 @@ run_horizon() {
   "$VENV_BIN/horizon" --hours "$RUN_HOURS"
 }
 
+ensure_rsshub() {
+  local container_name="horizon-rsshub"
+  local status
+  status="$(docker inspect -f '{{.State.Status}}' "$container_name" 2>/dev/null || true)"
+
+  if [[ "$status" == "running" ]]; then
+    return 0
+  fi
+  if [[ -n "$status" ]]; then
+    docker start "$container_name" >/dev/null
+    return 0
+  fi
+
+  docker compose -f docker-compose.local.yml up -d rsshub >/dev/null
+}
+
 if [[ -f .env ]]; then
   set -a
   # shellcheck disable=SC1091
@@ -178,7 +194,7 @@ sync_dependencies "$UV_BIN"
 
 FAILED_STEP="rsshub"
 log "Ensuring local RSSHub is running..."
-docker compose -f docker-compose.local.yml up -d rsshub >/dev/null
+ensure_rsshub
 
 FAILED_STEP="changedetection"
 log "Ensuring local changedetection.io is running..."
