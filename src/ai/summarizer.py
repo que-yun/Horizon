@@ -67,10 +67,10 @@ SOURCE_LABELS = {
     },
     "zh": {
         "github": "GitHub",
-        "hackernews": "Hacker News",
-        "rss": "RSS",
-        "reddit": "Reddit",
-        "telegram": "Telegram",
+        "hackernews": "Hacker News 社区",
+        "rss": "订阅源",
+        "reddit": "Reddit 社区",
+        "telegram": "Telegram 频道",
         "unknown": "未知",
     },
 }
