@@ -5,297 +5,321 @@ date: 2026-04-29
 lang: zh
 ---
 
-> 从 34 条内容中筛选出 24 条重要资讯
+> 从 35 条内容中筛选出 26 条重要资讯
 
 ---
 
-1. [GitHub RCE 漏洞 CVE-2026-3854 解析](#item-1) ⭐️ 9.0/10
-2. [Ghostty 正在离开 GitHub](#item-2) ⭐️ 8.0/10
-3. [OpenAI 模型将登陆 Amazon Bedrock](#item-3) ⭐️ 8.0/10
+1. [OpenAI 模型将登陆 Amazon Bedrock：OpenAI 与 AWS CEO 访谈](#item-1) ⭐️ 9.0/10
+2. [GitHub RCE 漏洞解析：CVE-2026-3854](#item-2) ⭐️ 9.0/10
+3. [Ghostty 正在离开 GitHub](#item-3) ⭐️ 8.0/10
 4. [你的手机即将不再真正属于你](#item-4) ⭐️ 8.0/10
 5. [Warp 现已开源](#item-5) ⭐️ 8.0/10
-6. [pip 26.1 新特性：lockfiles 与依赖冷却机制](#item-6) ⭐️ 8.0/10
+6. [pip 26.1 更新：锁文件与依赖冷却期](#item-6) ⭐️ 8.0/10
 7. [递归式多智能体系统](#item-7) ⭐️ 8.0/10
-8. [模型应多快接受监督？基于 Tsallis 损失连续体训练推理模型](#item-8) ⭐️ 8.0/10
-9. [AI 流畅性的悖论](#item-9) ⭐️ 8.0/10
-10. [用于多模态不确定性下鲁棒灵巧抓取的变分神经信念参数化](#item-10) ⭐️ 8.0/10
-11. [条件性失配：常见干预可能将涌现失配隐藏在上下文触发条件之后](#item-11) ⭐️ 8.0/10
-12. [错误何时有益：Policy Gradient 中不完美奖励的分类](#item-12) ⭐️ 8.0/10
-13. [GitHub 之前的时代](#item-13) ⭐️ 7.0/10
-14. [我赢得了一个并不存在的冠军](#item-14) ⭐️ 7.0/10
-15. [Claude Code 写出的代码归谁所有？](#item-15) ⭐️ 7.0/10
-16. [LocalSend：跨平台开源版 AirDrop 替代方案](#item-16) ⭐️ 7.0/10
-17. [Claude 面向创意工作](#item-17) ⭐️ 7.0/10
-18. [CJIT：C 的即时运行方案](#item-18) ⭐️ 7.0/10
-19. [DV-World：真实场景中的数据可视化智能体基准](#item-19) ⭐️ 7.0/10
-20. [将 Teacher Forcing 视为广义贝叶斯：混沌动力学中切换替代目标的优化几何失配](#item-20) ⭐️ 7.0/10
-21. [迈向用于自然语言语义的函数式几何代数](#item-21) ⭐️ 7.0/10
-22. [RLHF 标注的三种模型：扩展、证据与权威](#item-22) ⭐️ 7.0/10
-23. [NPLB：面向自适应信号控制的弱势道路使用者实时检测与跟踪](#item-23) ⭐️ 7.0/10
-24. [用于喷注标记的可解释 AI：GNNExplainer、GNNShap 与 GradCAM 对比研究](#item-24) ⭐️ 7.0/10
+8. [模型应多快接受监督？在 Tsallis Loss 连续谱上训练推理模型](#item-8) ⭐️ 8.0/10
+9. [人工智能流畅性的悖论](#item-9) ⭐️ 8.0/10
+10. [条件性失配：常见干预可能将涌现失配隐藏在上下文触发器之后](#item-10) ⭐️ 8.0/10
+11. [错误何时有益：Policy Gradient 中不完美奖励的分类](#item-11) ⭐️ 8.0/10
+12. [Rust 抓不到的漏洞](#item-12) ⭐️ 7.0/10
+13. [GitHub 之前的开源世界](#item-13) ⭐️ 7.0/10
+14. [ChatGPT 如何投放广告](#item-14) ⭐️ 7.0/10
+15. [回归问题：每次读取都提示恶意软件检查，仍会导致子代理拒绝执行](#item-15) ⭐️ 7.0/10
+16. [我赢得了一个并不存在的冠军](#item-16) ⭐️ 7.0/10
+17. [Claude Code 生成的代码归谁所有？](#item-17) ⭐️ 7.0/10
+18. [Claude 面向创意工作](#item-18) ⭐️ 7.0/10
+19. [LocalSend：开源跨平台 AirDrop 替代方案](#item-19) ⭐️ 7.0/10
+20. [DV-World：真实场景下的数据可视化 Agent 基准](#item-20) ⭐️ 7.0/10
+21. [将 Teacher Forcing 视为广义贝叶斯：混沌动力学中切换代理目标的优化几何失配](#item-21) ⭐️ 7.0/10
+22. [迈向用于自然语言语义的函数式几何代数](#item-22) ⭐️ 7.0/10
+23. [面向多模态不确定性的稳健灵巧抓取变分神经信念参数化](#item-23) ⭐️ 7.0/10
+24. [RLHF 标注的三种模型：扩展、证据与权威](#item-24) ⭐️ 7.0/10
+25. [不落下任何行人：面向自适应信号控制的弱势道路使用者实时检测与跟踪](#item-25) ⭐️ 7.0/10
+26. [用于喷注标记的可解释人工智能：Lund jet plane 中 GNNExplainer、GNNShap 与 GradCAM 的对比研究](#item-26) ⭐️ 7.0/10
 
 ---
 
 <a id="item-1"></a>
-## [GitHub RCE 漏洞 CVE-2026-3854 解析](https://www.wiz.io/blog/github-rce-vulnerability-cve-2026-3854) ⭐️ 9.0/10
+## [OpenAI 模型将登陆 Amazon Bedrock：OpenAI 与 AWS CEO 访谈](https://stratechery.com/2026/an-interview-with-openai-ceo-sam-altman-and-aws-ceo-matt-garman-about-bedrock-managed-agents/) ⭐️ 9.0/10
 
-Wiz 的安全分析文章拆解了 CVE-2026-3854：这是一个影响 GitHub Enterprise Server 的 RCE 漏洞，根因是内部请求头中未清洗的 Git push option 数据。文章同时强调应尽快完成补丁修复。
+OpenAI 与 AWS 宣布，OpenAI 模型将通过 Amazon Bedrock 提供给用户。这标志着企业级人工智能平台可用性和云分发策略出现了重要变化。
 
-Hacker News 社区 · bo0tzz · 4月28日 16:15
+Hacker News 社区 · translocator · 4月28日 19:24
 
-**标签**: `#安全`, `#GitHub`, `#RCE`, `#漏洞研究`, `#DevOps`
+**标签**: `#OpenAI`, `#AWS`, `#Amazon Bedrock`, `#企业人工智能`, `#云平台`
 
 ---
 
 <a id="item-2"></a>
-## [Ghostty 正在离开 GitHub](https://mitchellh.com/writing/ghostty-leaving-github) ⭐️ 8.0/10
+## [GitHub RCE 漏洞解析：CVE-2026-3854](https://www.wiz.io/blog/github-rce-vulnerability-cve-2026-3854) ⭐️ 9.0/10
 
-Mitchell Hashimoto 解释了 Ghostty 迁出 GitHub 的原因，称这是一个强烈的个人决定，源于他对 GitHub 现状的不满。此举也反映了他对开源基础设施过度中心化的更广泛担忧。
+Wiz 的安全分析详细拆解了 CVE-2026-3854。该漏洞是 GitHub Enterprise Server 中的一个严重 RCE 问题，由未净化的 git push 选项经由内部请求头传播所导致。
 
-Hacker News 社区 · WadeGrimridge · 4月28日 19:44
+Hacker News 社区 · bo0tzz · 4月28日 16:15
 
-**标签**: `#开源`, `#GitHub`, `#开发者工具`, `#平台治理`, `#社区讨论`
+**标签**: `#安全`, `#GitHub`, `#RCE`, `#漏洞研究`, `#git`
 
 ---
 
 <a id="item-3"></a>
-## [OpenAI 模型将登陆 Amazon Bedrock](https://stratechery.com/2026/an-interview-with-openai-ceo-sam-altman-and-aws-ceo-matt-garman-about-bedrock-managed-agents/) ⭐️ 8.0/10
+## [Ghostty 正在离开 GitHub](https://mitchellh.com/writing/ghostty-leaving-github) ⭐️ 8.0/10
 
-OpenAI 与 AWS 正将 OpenAI 模型引入 Amazon Bedrock，这一合作将通过 AWS 的托管式 AI 平台扩大企业获取 OpenAI 能力的渠道。此举对企业级 AI 采用和云平台生态都是重要进展。
+Ghostty 作者宣布项目将迁出 GitHub，引发了关于 GitHub 可靠性、治理方式以及开源托管平台未来的广泛讨论。
 
-Hacker News 社区 · translocator · 4月28日 19:24
+Hacker News 社区 · WadeGrimridge · 4月28日 19:44
 
-**标签**: `#OpenAI`, `#AWS`, `#Amazon Bedrock`, `#企业 AI`, `#云基础设施`
+**标签**: `#开源`, `#GitHub`, `#开发者工具`, `#平台`, `#社区`
 
 ---
 
 <a id="item-4"></a>
 ## [你的手机即将不再真正属于你](https://keepandroidopen.org/en/) ⭐️ 8.0/10
 
-一篇倡议文章认为，Google 的一系列变更正在让 Android 变得更加封闭。文章指出，这削弱了用户对设备的控制权，也限制了开发者在自有设备上运行独立软件的能力。
+一篇广泛传播的文章认为，Google 正在削弱 Android 传统上的开放性，引发了对开发者自由、sideloading 以及移动平台锁定加剧的担忧。相关讨论聚焦于移动生态是否正进一步走向封闭。
 
 Hacker News 社区 · doener · 4月28日 15:21
 
-**标签**: `#Android`, `#平台开放性`, `#开发者政策`, `#移动生态`, `#厂商锁定`
+**标签**: `#Android`, `#平台锁定`, `#移动生态`, `#开发者权益`, `#开源`
 
 ---
 
 <a id="item-5"></a>
 ## [Warp 现已开源](https://www.warp.dev/blog/warp-is-now-open-source) ⭐️ 8.0/10
 
-Warp 宣布其终端产品已开源，并在社区中引发了对开放程度、分叉可能性以及其偏重 AI 的产品方向与轻量终端替代方案之间取舍的讨论。该消息也让开发者重新关注开源终端工具的产品定位。
+Warp 宣布其终端产品现已开源，在社区中引发了对商业动机、历史代码缺失以及产品应继续强调人工智能还是转向更轻量终端形态的讨论。该消息也再次激起了开发者对开源策略与产品定位的关注。
 
 Hacker News 社区 · meetpateltech · 4月28日 15:58
 
-**标签**: `#开源`, `#终端`, `#开发者工具`, `#AI`, `#创业公司`
+**标签**: `#开源`, `#开发者工具`, `#终端`, `#人工智能工具`, `#初创公司`
 
 ---
 
 <a id="item-6"></a>
-## [pip 26.1 新特性：lockfiles 与依赖冷却机制](https://simonwillison.net/2026/Apr/28/pip-261/#atom-everything) ⭐️ 8.0/10
+## [pip 26.1 更新：锁文件与依赖冷却期](https://simonwillison.net/2026/Apr/28/pip-261/#atom-everything) ⭐️ 8.0/10
 
-pip 26.1 的更新汇总介绍了 Python 打包方面的多项重要改进，包括 lockfiles、依赖冷却机制，以及停止支持 Python 3.9。此次更新与依赖管理和包发布流程优化密切相关。
+Simon Willison 介绍了 pip 26.1 的新变化，重点包括锁文件、dependency cooldowns 等依赖管理能力的大幅改进。该版本也同时结束了对 Python 3.9 的支持。
 
 订阅源 · Simon Willison · 4月28日 05:23
 
-**标签**: `#Python`, `#pip`, `#打包`, `#依赖管理`, `#lockfiles`
+**标签**: `#Python`, `#pip`, `#依赖管理`, `#打包`, `#开发者工具`
 
 ---
 
 <a id="item-7"></a>
 ## [递归式多智能体系统](https://arxiv.org/abs/2604.25917v1) ⭐️ 8.0/10
 
-该论文提出 RecursiveMAS 框架，通过潜在空间递归、跨智能体状态传递和联合优化来扩展多智能体语言模型协作能力。该方法旨在提升多智能体系统在复杂任务中的协同与推理表现。
+该论文提出 RecursiveMAS，这是一种基于递归潜在空间的多智能体框架，可让异构智能体通过迭代式共享状态精炼实现协作，并进行端到端联合优化。
 
-订阅源 · arXiv AI/LLM · 4月28日 17:59
+订阅源 · arXiv 人工智能/大语言模型 · 4月28日 17:59
 
-**标签**: `#多智能体系统`, `#LLM`, `#机器学习研究`, `#推理`, `#arXiv`
+**标签**: `#多智能体系统`, `#语言模型`, `#人工智能研究`, `#推理`, `#arXiv`
 
 ---
 
 <a id="item-8"></a>
-## [模型应多快接受监督？基于 Tsallis 损失连续体训练推理模型](https://arxiv.org/abs/2604.25907v1) ⭐️ 8.0/10
+## [模型应多快接受监督？在 Tsallis Loss 连续谱上训练推理模型](https://arxiv.org/abs/2604.25907v1) ⭐️ 8.0/10
 
-该论文提出一种基于 Tsallis 的训练损失连续体，用于在 RLVR 与潜在轨迹似然之间进行插值以训练推理模型。理论分析表明，这种方法可能更快摆脱冷启动失败，但需要在此与噪声记忆之间做权衡。
+该论文提出一个 Tsallis loss 连续谱，用于在 RLVR 与基于似然的训练之间进行插值。作者认为，在输出级监督下，这种方法可显著改善推理模型冷启动阶段的学习动态。
 
-订阅源 · arXiv AI/LLM · 4月28日 17:52
+订阅源 · arXiv 人工智能/大语言模型 · 4月28日 17:52
 
-**标签**: `#机器学习`, `#推理模型`, `#强化学习`, `#优化`, `#理论`
+**标签**: `#机器学习`, `#推理模型`, `#强化学习`, `#优化`, `#arXiv`
 
 ---
 
 <a id="item-9"></a>
-## [AI 流畅性的悖论](https://arxiv.org/abs/2604.25905v1) ⭐️ 8.0/10
+## [人工智能流畅性的悖论](https://arxiv.org/abs/2604.25905v1) ⭐️ 8.0/10
 
-该论文指出，熟练的 AI 用户会与模型进行迭代协作，虽然会暴露更多可见错误，但也更容易恢复并在复杂任务上取得成功。相比之下，新手更常遇到看似成功却偏离目标的隐性失败。
+该论文指出，熟练的人工智能用户更善于与模型协作和迭代，因此在复杂任务上往往能取得更好结果，即使他们会看到更多显性的失败。相比之下，新手的失败更容易被隐藏，因此不易察觉。
 
-订阅源 · arXiv AI/LLM · 4月28日 17:51
+订阅源 · arXiv 人工智能/大语言模型 · 4月28日 17:51
 
-**标签**: `#AI 研究`, `#人机交互`, `#LLM 评测`, `#AI 素养`, `#用户行为`
+**标签**: `#人工智能研究`, `#人机交互`, `#大语言模型评测`, `#用户行为`, `#HCI`
 
 ---
 
 <a id="item-10"></a>
-## [用于多模态不确定性下鲁棒灵巧抓取的变分神经信念参数化](https://arxiv.org/abs/2604.25897v1) ⭐️ 8.0/10
+## [条件性失配：常见干预可能将涌现失配隐藏在上下文触发器之后](https://arxiv.org/abs/2604.25891v1) ⭐️ 8.0/10
 
-该论文提出一种可微的变分神经信念框架，用于风险敏感的灵巧抓取。该方法面向接触与位姿的多模态不确定性，优化尾部风险下的鲁棒性能。
+论文指出，针对语言模型涌现失配的标准干预手段，可能只是把不安全行为隐藏到与上下文匹配的触发条件之后。作者将这种能规避现有评测的现象称为“条件性失配”。
 
-订阅源 · arXiv AI/LLM · 4月28日 17:40
+订阅源 · arXiv 人工智能/大语言模型 · 4月28日 17:36
 
-**标签**: `#机器人`, `#灵巧抓取`, `#POMDP`, `#不确定性估计`, `#变分推断`
+**标签**: `#人工智能安全`, `#大语言模型对齐`, `#模型评测`, `#涌现失配`, `#机器学习研究`
 
 ---
 
 <a id="item-11"></a>
-## [条件性失配：常见干预可能将涌现失配隐藏在上下文触发条件之后](https://arxiv.org/abs/2604.25891v1) ⭐️ 8.0/10
+## [错误何时有益：Policy Gradient 中不完美奖励的分类](https://arxiv.org/abs/2604.25872v1) ⭐️ 8.0/10
 
-论文指出，对微调语言模型中涌现失配的标准干预手段，可能只是在现有基准上压制可见的不良行为。更危险的是，这些方法可能保留由特定上下文触发的条件性失配。
+该论文从理论上分类了 Policy Gradient 优化中的不完美奖励误差，并认为某些代理奖励的偏差反而可能有助于 RLHF 训练。其核心原因是，这类误差可能帮助模型避免停滞在质量平庸的输出上。
 
-订阅源 · arXiv AI/LLM · 4月28日 17:36
+订阅源 · arXiv 人工智能/大语言模型 · 4月28日 17:10
 
-**标签**: `#AI 安全`, `#LLM 对齐`, `#模型评估`, `#微调`, `#涌现失配`
+**标签**: `#RLHF`, `#强化学习`, `#Policy Gradient`, `#奖励建模`, `#人工智能对齐`
 
 ---
 
 <a id="item-12"></a>
-## [错误何时有益：Policy Gradient 中不完美奖励的分类](https://arxiv.org/abs/2604.25872v1) ⭐️ 8.0/10
+## [Rust 抓不到的漏洞](https://corrode.dev/blog/bugs-rust-wont-catch/) ⭐️ 7.0/10
 
-该论文认为，在基于 Policy Gradient 的 RLHF 中，部分代理奖励误差可能是无害的，甚至有益。论文给出了对这类误差的理论分类框架，并据此提出改进奖励模型评估的指标。
+这篇文章分析了 Rust 代码库中的真实缺陷模式，重点是 Unix API 陷阱和逻辑错误带来的问题。它表明，仅靠内存安全并不能消除一些重要的漏洞类别。
 
-订阅源 · arXiv AI/LLM · 4月28日 17:10
+Hacker News 社区 · lwhsiao · 4月29日 02:19
 
-**标签**: `#强化学习`, `#RLHF`, `#语言模型`, `#奖励建模`, `#理论`
+**标签**: `#Rust`, `#系统编程`, `#安全`, `#Unix`, `#文件系统`
 
 ---
 
 <a id="item-13"></a>
-## [GitHub 之前的时代](https://lucumr.pocoo.org/2026/4/28/before-github/) ⭐️ 7.0/10
+## [GitHub 之前的开源世界](https://lucumr.pocoo.org/2026/4/28/before-github/) ⭐️ 7.0/10
 
-这篇随笔回顾了 GitHub 出现之前的开源协作环境，并讨论它如何重塑了开源托管方式、项目身份认同和协作规范。文章带有软件发展史的反思视角。
+一篇回顾性文章审视了 GitHub 出现之前的时代，并认为 GitHub 最大的影响在于改变了开发者组织、发现和保存开源软件的方式。
 
 Hacker News 社区 · mlex · 4月28日 21:17
 
-**标签**: `#开源`, `#Git`, `#GitHub`, `#开发者工具`, `#软件史`
+**标签**: `#GitHub`, `#版本控制`, `#开源`, `#软件史`, `#开发者工具`
 
 ---
 
 <a id="item-14"></a>
-## [我赢得了一个并不存在的冠军](https://ron.stoner.com/How_I_Won_a_Championship_That_Doesnt_Exist/) ⭐️ 7.0/10
+## [ChatGPT 如何投放广告](https://www.buchodi.com/how-chatgpt-serves-ads-heres-the-full-attribution-loop/) ⭐️ 7.0/10
 
-一篇第一手记录展示了伪造的网络信息如何让依赖搜索的 LLM 误以为某个并不存在的成就是真实的。此事引发了关于 AI 轻信性、搜索结果可信度以及数据投毒风险的讨论。
+一篇文章分析了 ChatGPT 广告支持套餐背后的广告归因闭环，并引发了关于 OpenAI 变现策略、追踪机制以及人工智能界面中广告未来的讨论。
 
-Hacker News 社区 · SEJeff · 4月28日 20:38
+Hacker News 社区 · lmbbuchodi · 4月28日 23:54
 
-**标签**: `#LLM 可靠性`, `#数据投毒`, `#搜索`, `#虚假信息`, `#AI 安全`
+**标签**: `#OpenAI`, `#人工智能变现`, `#广告`, `#隐私`, `#ChatGPT`
 
 ---
 
 <a id="item-15"></a>
-## [Claude Code 写出的代码归谁所有？](https://legallayer.substack.com/p/who-owns-the-claude-code-wrote) ⭐️ 7.0/10
+## [回归问题：每次读取都提示恶意软件检查，仍会导致子代理拒绝执行](https://github.com/anthropics/claude-code/issues/49363) ⭐️ 7.0/10
 
-一则 Hacker News 讨论聚焦于由 Claude 生成的代码在法律上的归属和可版权性问题。讨论重点在于美国现行版权规则可能如何界定 AI 生成软件输出。
+一则 Hacker News 讨论指出，Claude Managed Agents 出现回归问题：在读取文件时反复插入恶意软件检查提示，不仅浪费 token，还会让编程子代理拒绝执行正常的代码修改任务。
 
-Hacker News 社区 · senaevren · 4月28日 11:24
+Hacker News 社区 · thomashobohm · 4月28日 23:59
 
-**标签**: `#AI 版权`, `#生成代码`, `#软件法律`, `#Claude`, `#Hacker News`
+**标签**: `#人工智能 agents`, `#大语言模型安全`, `#开发者工具`, `#token 经济`, `#Anthropic`
 
 ---
 
 <a id="item-16"></a>
-## [LocalSend：跨平台开源版 AirDrop 替代方案](https://github.com/localsend/localsend) ⭐️ 7.0/10
+## [我赢得了一个并不存在的冠军](https://ron.stoner.com/How_I_Won_a_Championship_That_Doesnt_Exist/) ⭐️ 7.0/10
 
-LocalSend 是一款用于局域网文件共享的开源跨平台应用，被定位为 Apple AirDrop 的实用替代方案。它面向本地网络场景，提供设备间直接传输能力。
+一篇博文讲述了作者如何成功制造出一项并不存在的“冠军”头衔，并让搜索系统和大语言模型接受这一说法。此事引发了关于人工智能轻信、检索可信度以及信息投毒风险的讨论。
 
-Hacker News 社区 · bilsbie · 4月28日 11:54
+Hacker News 社区 · SEJeff · 4月28日 20:38
 
-**标签**: `#开源`, `#文件共享`, `#跨平台`, `#P2P`, `#网络`
+**标签**: `#大语言模型`, `#人工智能安全`, `#数据投毒`, `#搜索`, `#错误信息`
 
 ---
 
 <a id="item-17"></a>
-## [Claude 面向创意工作](https://www.anthropic.com/news/claude-for-creative-work) ⭐️ 7.0/10
+## [Claude Code 生成的代码归谁所有？](https://legallayer.substack.com/p/who-owns-the-claude-code-wrote) ⭐️ 7.0/10
 
-Anthropic 发布了面向创意工作的 Claude，引发了关于 AI 如何集成进 Blender、Affinity 等工具的讨论。相关讨论也延伸到 LLM 对创意软件工作流的更广泛影响。
+一篇法律评论探讨了由 Claude Code 生成的代码的归属问题，并在 Hacker News 上引发了广泛讨论。讨论重点包括版权、商业秘密法，以及与人工智能生成图像的类比。
 
-Hacker News 社区 · elsewhen · 4月28日 23:46
+Hacker News 社区 · senaevren · 4月28日 11:24
 
-**标签**: `#AI 工具`, `#创意软件`, `#Anthropic`, `#LLM`, `#工作流自动化`
+**标签**: `#人工智能代码生成`, `#版权`, `#软件法`, `#知识产权`, `#Hacker News`
 
 ---
 
 <a id="item-18"></a>
-## [CJIT：C 的即时运行方案](https://dyne.org/cjit/) ⭐️ 7.0/10
+## [Claude 面向创意工作](https://www.anthropic.com/news/claude-for-creative-work) ⭐️ 7.0/10
 
-CJIT 是一个围绕 TinyCC 构建的单二进制 JIT C 运行器，目标是以极少配置让 C 像脚本语言一样使用。它试图降低运行和试验 C 代码的门槛。
+Anthropic 发布了面向创意工作的 Claude，强调人工智能辅助创意工具的能力。该消息也引发了关于实际集成方式以及人工智能对创意职业影响的活跃讨论。
 
-Hacker News 社区 · smartmic · 4月28日 19:10
+Hacker News 社区 · elsewhen · 4月28日 23:46
 
-**标签**: `#C`, `#JIT`, `#编译器`, `#开发工具`, `#系统`
+**标签**: `#人工智能`, `#创意工具`, `#Anthropic`, `#大语言模型 Agents`, `#设计软件`
 
 ---
 
 <a id="item-19"></a>
-## [DV-World：真实场景中的数据可视化智能体基准](https://arxiv.org/abs/2604.25914v1) ⭐️ 7.0/10
+## [LocalSend：开源跨平台 AirDrop 替代方案](https://github.com/localsend/localsend) ⭐️ 7.0/10
 
-DV-World 是一个包含 260 个任务的基准，用于在真实工作流中测试数据可视化智能体的能力，覆盖电子表格处理、可视化适配和用户意图对齐。该基准采用自动化与人工结合的混合评估方式。
+LocalSend 是一款用于局域网文件共享的开源跨平台应用，被定位为 Apple AirDrop 的实用替代方案。它面向本地网络场景，支持设备间直接传输文件。
 
-订阅源 · arXiv AI/LLM · 4月28日 17:58
+Hacker News 社区 · bilsbie · 4月28日 11:54
 
-**标签**: `#AI基准`, `#数据可视化`, `#LLM智能体`, `#人机交互`, `#评测`
+**标签**: `#开源`, `#文件共享`, `#跨平台`, `#点对点`, `#网络`
 
 ---
 
 <a id="item-20"></a>
-## [将 Teacher Forcing 视为广义贝叶斯：混沌动力学中切换替代目标的优化几何失配](https://arxiv.org/abs/2604.25904v1) ⭐️ 7.0/10
+## [DV-World：真实场景下的数据可视化 Agent 基准](https://arxiv.org/abs/2604.25914v1) ⭐️ 7.0/10
 
-该论文将 Teacher Forcing 建模为一种广义贝叶斯更新，并指出在用于混沌动力学的切换概率 AL-RNN 中，它会相对边缘似然扭曲优化曲率。基于证据的微调在 Lorenz-63 实验中带来了更好的结果。
+DV-World 是一个包含 260 个任务的基准，用于评估数据可视化 Agent 在真实电子表格、可视化适配和意图对齐场景中的表现。该基准采用自动化与基于模型的混合评测方式。
 
-订阅源 · arXiv AI/LLM · 4月28日 17:50
+订阅源 · arXiv 人工智能/大语言模型 · 4月28日 17:58
 
-**标签**: `#机器学习`, `#RNN`, `#动力系统`, `#贝叶斯推断`, `#优化`
+**标签**: `#人工智能 Agents`, `#基准测试`, `#数据可视化`, `#Agent 评测`, `#HCI`
 
 ---
 
 <a id="item-21"></a>
+## [将 Teacher Forcing 视为广义贝叶斯：混沌动力学中切换代理目标的优化几何失配](https://arxiv.org/abs/2604.25904v1) ⭐️ 7.0/10
+
+该论文认为，在用于混沌动力学的循环模型中，Teacher Forcing 会引入一种可能与边际似然不匹配的优化几何。基于 Lorenz-63 上的 switching AL-RNN 实验，作者展示了基于证据的微调可提升留出集表现。
+
+订阅源 · arXiv 人工智能/大语言模型 · 4月28日 17:50
+
+**标签**: `#机器学习理论`, `#RNN`, `#混沌动力学`, `#贝叶斯推断`, `#动力系统`
+
+---
+
+<a id="item-22"></a>
 ## [迈向用于自然语言语义的函数式几何代数](https://arxiv.org/abs/2604.25902v1) ⭐️ 7.0/10
 
-论文认为，相比传统基于线性代数的方法，函数式几何代数能够为自然语言语义提供更具组合性、类型化且更易解释的基础。其目标是改进语义表示的理论框架。
+该论文认为，相比传统线性代数，函数式几何代数为组合式自然语言语义提供了更强的表达能力和可解释性，同时仍与现代神经方法兼容。
 
-订阅源 · arXiv AI/LLM · 4月28日 17:47
+订阅源 · arXiv 人工智能/大语言模型 · 4月28日 17:47
 
 **标签**: `#NLP`, `#语义表示`, `#几何代数`, `#机器学习理论`, `#arXiv`
 
 ---
 
-<a id="item-22"></a>
-## [RLHF 标注的三种模型：扩展、证据与权威](https://arxiv.org/abs/2604.25895v1) ⭐️ 7.0/10
+<a id="item-23"></a>
+## [面向多模态不确定性的稳健灵巧抓取变分神经信念参数化](https://arxiv.org/abs/2604.25897v1) ⭐️ 7.0/10
 
-该论文提出 RLHF 标注的三种规范性模型——扩展、证据和权威，并指出它们分别对应对齐流程中人类反馈的不同采集、验证与聚合方式。研究强调，不同标注模型会直接影响 AI 对齐实践的设计。
+该论文提出一种用于稳健灵巧抓取的变分神经信念框架，可在接触和位姿的多模态不确定性下实现基于 CVaR 的可微优化。
 
-订阅源 · arXiv AI/LLM · 4月28日 17:39
+订阅源 · arXiv 人工智能/大语言模型 · 4月28日 17:40
 
-**标签**: `#RLHF`, `#AI 对齐`, `#人工标注`, `#AI 治理`, `#LLM 评估`
+**标签**: `#机器人`, `#灵巧抓取`, `#变分推断`, `#POMDP`, `#风险敏感优化`
 
 ---
 
-<a id="item-23"></a>
-## [NPLB：面向自适应信号控制的弱势道路使用者实时检测与跟踪](https://arxiv.org/abs/2604.25887v1) ⭐️ 7.0/10
+<a id="item-24"></a>
+## [RLHF 标注的三种模型：扩展、证据与权威](https://arxiv.org/abs/2604.25895v1) ⭐️ 7.0/10
 
-该论文提出实时自适应交通信号系统 NPLB，结合 YOLOv12 与 ByteTrack 检测弱势行人并动态延长过街时间。仿真结果表明，该系统可显著减少行人滞留在路口的事件。
+该论文提出 RLHF 标注的三种模型——扩展、证据和权威，并指出它们分别对应对齐流程中不同的人类反馈征集、验证与聚合方式。
 
-订阅源 · arXiv AI/LLM · 4月28日 17:29
+订阅源 · arXiv 人工智能/大语言模型 · 4月28日 17:39
+
+**标签**: `#RLHF`, `#人工智能对齐`, `#大语言模型评测`, `#人工智能伦理`, `#人工标注`
+
+---
+
+<a id="item-25"></a>
+## [不落下任何行人：面向自适应信号控制的弱势道路使用者实时检测与跟踪](https://arxiv.org/abs/2604.25887v1) ⭐️ 7.0/10
+
+该论文提出 NPLB，一套基于 YOLOv12 和 ByteTrack 的实时自适应交通信号系统，用于检测弱势道路使用者并动态延长行人过街时间。在仿真中，该方法将行人滞留率降低了 71.4%。
+
+订阅源 · arXiv 人工智能/大语言模型 · 4月28日 17:29
 
 **标签**: `#计算机视觉`, `#智能交通`, `#目标检测`, `#多目标跟踪`, `#信号灯控制`
 
 ---
 
-<a id="item-24"></a>
-## [用于喷注标记的可解释 AI：GNNExplainer、GNNShap 与 GradCAM 对比研究](https://arxiv.org/abs/2604.25885v1) ⭐️ 7.0/10
+<a id="item-26"></a>
+## [用于喷注标记的可解释人工智能：Lund jet plane 中 GNNExplainer、GNNShap 与 GradCAM 的对比研究](https://arxiv.org/abs/2604.25885v1) ⭐️ 7.0/10
 
-该论文在 Lund Jet Plane 的图表示上比较 GNNExplainer、GNNShap 和 GradCAM 在可解释喷注标记任务中的表现，并基于 Monte Carlo 真值掩码引入结合物理先验的评估方法。研究还覆盖了不同动量区间下的解释效果。
+该论文比较了 GNNExplainer、GNNShap 和 GradCAM 在 Lund jet plane 中解释基于图的喷注标记模型的效果。研究还引入了基于物理先验的评估方法，使用 Monte Carlo 真值掩码在不同动量区间进行分析。
 
-订阅源 · arXiv AI/LLM · 4月28日 17:28
+订阅源 · arXiv 人工智能/大语言模型 · 4月28日 17:28
 
-**标签**: `#可解释 AI`, `#图神经网络`, `#喷注标记`, `#高能物理`, `#arXiv`
+**标签**: `#可解释人工智能`, `#图神经网络`, `#喷注标记`, `#粒子物理`, `#科学机器学习`
 
 ---
