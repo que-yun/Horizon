@@ -58,9 +58,9 @@ def test_generate_webhook_item_renders_single_item_detail():
 def test_generate_webhook_item_normalizes_common_zh_terms():
     summarizer = DailySummarizer()
     item = _make_item(1)
-    item.title = "AI 流畅性的悖论"
-    item.ai_summary = "LLM 与 lockfiles、P2P 和 DevOps 相关。"
-    item.ai_tags = ["AI", "LLM 评测", "P2P", "DevOps"]
+    item.title = "AI Agent 与 HCI：Tsallis Loss 和 Policy Gradient"
+    item.ai_summary = "LLM 与 lockfiles、dependency cooldowns、P2P、sideloading 和 Claude Managed Agents、DevOps 相关。"
+    item.ai_tags = ["AI", "LLM 评测", "P2P", "DevOps", "Agent 基准"]
     item.metadata["feed_name"] = "arXiv AI/LLM"
 
     result = summarizer.generate_webhook_item(
@@ -70,7 +70,7 @@ def test_generate_webhook_item_normalizes_common_zh_terms():
         total=1,
     )
 
-    assert "## [人工智能流畅性的悖论](https://example.com/items/1)" in result
-    assert "大语言模型与锁文件、点对点和研发运维相关。" in result
+    assert "## [人工智能智能体与人机交互：Tsallis 损失和策略梯度](https://example.com/items/1)" in result
+    assert "大语言模型与锁文件、依赖冷却期、点对点、侧载和 Claude 托管智能体、研发运维相关。" in result
     assert "订阅源 · arXiv 人工智能/大语言模型 · 4月25日 08:00" in result
-    assert "**标签**: `#人工智能`, `#大语言模型评测`, `#点对点`, `#研发运维`" in result
+    assert "**标签**: `#人工智能`, `#大语言模型评测`, `#点对点`, `#研发运维`, `#智能体基准`" in result

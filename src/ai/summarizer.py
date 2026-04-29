@@ -9,13 +9,30 @@ from ..models import ContentItem
 _CJK = r"[\u4e00-\u9fff\u3400-\u4dbf]"
 _ASCII = r"[A-Za-z0-9]"
 _ZH_TERM_PATTERNS = (
+    (re.compile(r"\bdependency cooldowns\b", re.IGNORECASE), "依赖冷却期"),
+    (re.compile(r"\bClaude\s+Managed\s+Agents\b", re.IGNORECASE), "Claude 托管智能体"),
+    (re.compile(r"\bManaged\s+Agents?\b", re.IGNORECASE), "托管智能体"),
+    (re.compile(r"\bTsallis\s+Loss\b", re.IGNORECASE), "Tsallis 损失"),
+    (re.compile(r"\bPolicy\s+Gradient\b", re.IGNORECASE), "策略梯度"),
     (re.compile(r"\blockfiles?\b", re.IGNORECASE), "锁文件"),
     (re.compile(r"\bP2P\b", re.IGNORECASE), "点对点"),
     (re.compile(r"\bDevOps\b", re.IGNORECASE), "研发运维"),
+    (re.compile(r"\bsideloading\b", re.IGNORECASE), "侧载"),
+    (re.compile(r"\bAgents?\b", re.IGNORECASE), "智能体"),
+    (re.compile(r"\bHCI\b"), "人机交互"),
+    (re.compile(r"\bCEO\b"), "首席执行官"),
     (re.compile(r"(?<![A-Za-z])LLM(?![A-Za-z])"), "大语言模型"),
     (re.compile(r"(?<![A-Za-z])AI(?![A-Za-z])"), "人工智能"),
 )
 _ZH_NATIVE_TERM_GROUP = "人工智能|大语言模型|点对点|锁文件|研发运维"
+_ZH_COMPACT_PHRASES = (
+    "智能体",
+    "首席执行官",
+    "策略梯度",
+    "依赖冷却期",
+    "人机交互",
+    "侧载",
+)
 
 
 def _pangu(text: str) -> str:
@@ -41,6 +58,11 @@ def _normalize_zh_text(text: str) -> str:
         r"\1\2",
         normalized,
     )
+    for phrase in _ZH_COMPACT_PHRASES:
+        escaped = re.escape(phrase)
+        normalized = re.sub(rf"(?<=[\u4e00-\u9fff])\s+{escaped}", phrase, normalized)
+        normalized = re.sub(rf"{escaped}\s+(?=[\u4e00-\u9fff])", phrase, normalized)
+    normalized = re.sub(r"(?<=[\u4e00-\u9fff])\s+(?=[\u4e00-\u9fff])", "", normalized)
     return normalized
 
 
