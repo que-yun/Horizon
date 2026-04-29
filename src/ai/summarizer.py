@@ -8,6 +8,14 @@ from ..models import ContentItem
 
 _CJK = r"[\u4e00-\u9fff\u3400-\u4dbf]"
 _ASCII = r"[A-Za-z0-9]"
+_ZH_TERM_PATTERNS = (
+    (re.compile(r"\blockfiles?\b", re.IGNORECASE), "锁文件"),
+    (re.compile(r"\bP2P\b", re.IGNORECASE), "点对点"),
+    (re.compile(r"\bDevOps\b", re.IGNORECASE), "研发运维"),
+    (re.compile(r"(?<![A-Za-z])LLM(?![A-Za-z])"), "大语言模型"),
+    (re.compile(r"(?<![A-Za-z])AI(?![A-Za-z])"), "人工智能"),
+)
+_ZH_NATIVE_TERM_GROUP = "人工智能|大语言模型|点对点|锁文件|研发运维"
 
 
 def _pangu(text: str) -> str:
@@ -15,6 +23,25 @@ def _pangu(text: str) -> str:
     text = re.sub(rf"({_CJK})({_ASCII})", r"\1 \2", text)
     text = re.sub(rf"({_ASCII})({_CJK})", r"\1 \2", text)
     return text
+
+
+def _normalize_zh_text(text: str) -> str:
+    """Translate a few common generic English terms to steadier Chinese phrasing."""
+    normalized = str(text or "")
+    for pattern, replacement in _ZH_TERM_PATTERNS:
+        normalized = pattern.sub(replacement, normalized)
+
+    normalized = re.sub(
+        rf"({_CJK})\s+({_ZH_NATIVE_TERM_GROUP})",
+        r"\1\2",
+        normalized,
+    )
+    normalized = re.sub(
+        rf"({_ZH_NATIVE_TERM_GROUP})\s+({_CJK})",
+        r"\1\2",
+        normalized,
+    )
+    return normalized
 
 
 LABELS = {
@@ -124,6 +151,7 @@ class DailySummarizer:
             _t = item.metadata.get(f"title_{language}") or item.title
             t = str(_t).replace("[", "(").replace("]", ")")
             if language == "zh":
+                t = _normalize_zh_text(t)
                 t = _pangu(t)
             score = item.ai_score or "?"
             toc_entries.append(f"{i + 1}. [{t}](#item-{i + 1}) \u2b50\ufe0f {score}/10")
@@ -205,10 +233,15 @@ class DailySummarizer:
             tags = item.ai_tags
 
         if language == "zh":
+            title = _normalize_zh_text(title)
+            summary = _normalize_zh_text(summary)
+            background = _normalize_zh_text(background)
+            discussion = _normalize_zh_text(discussion)
             title = _pangu(title)
             summary = _pangu(summary)
             background = _pangu(background)
             discussion = _pangu(discussion)
+            tags = [_normalize_zh_text(str(tag)) for tag in tags]
 
         # Source line with parts joined by " · ", link appended at end
         source_type = SOURCE_LABELS.get(language, SOURCE_LABELS["en"]).get(
@@ -219,7 +252,10 @@ class DailySummarizer:
         if meta.get("subreddit"):
             source_parts.append(f"r/{meta['subreddit']}")
         if meta.get("feed_name"):
-            source_parts.append(meta["feed_name"])
+            feed_name = str(meta["feed_name"])
+            if language == "zh":
+                feed_name = _pangu(_normalize_zh_text(feed_name))
+            source_parts.append(feed_name)
         else:
             source_parts.append(item.author or SOURCE_LABELS.get(language, SOURCE_LABELS["en"])["unknown"])
         if item.published_at:
