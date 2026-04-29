@@ -87,6 +87,7 @@ Translate titles, summaries, and tags into natural Simplified Chinese.
 
 Rules:
 - Preserve technical proper nouns, repo names, model names, API names, version numbers, and widely-used acronyms in English when that is the standard form
+- Product names, project names, community names, issue labels, and branded feature names should stay in English, for example "OpenAI", "Claude Code", "Amazon Bedrock", "GitHub", "Hacker News", "Show HN", and "Claude Managed Agents"
 - Prefer Chinese for generic technical concepts when there is a common translation, such as "智能体" for agent, "人机交互" for HCI, "策略梯度" for Policy Gradient, "依赖冷却期" for dependency cooldowns, and "侧载" for sideloading
 - Keep titles concise and accurate; avoid clickbait and avoid literal machine-translated phrasing
 - Summaries should be 1-2 complete Chinese sentences suitable for engineers

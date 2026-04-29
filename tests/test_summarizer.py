@@ -70,7 +70,28 @@ def test_generate_webhook_item_normalizes_common_zh_terms():
         total=1,
     )
 
-    assert "## [人工智能智能体与人机交互：Tsallis 损失和策略梯度](https://example.com/items/1)" in result
-    assert "大语言模型与锁文件、依赖冷却期、点对点、侧载和 Claude 托管智能体、研发运维相关。" in result
+    assert "## [人工智能智能体与人机交互：Tsallis Loss 和策略梯度](https://example.com/items/1)" in result
+    assert "大语言模型与锁文件、依赖冷却期、点对点、侧载和 Claude Managed Agents、研发运维相关。" in result
     assert "订阅源 · arXiv 人工智能/大语言模型 · 4月25日 08:00" in result
     assert "**标签**: `#人工智能`, `#大语言模型评测`, `#点对点`, `#研发运维`, `#智能体基准`" in result
+
+
+def test_generate_webhook_item_preserves_proper_nouns():
+    summarizer = DailySummarizer()
+    item = _make_item(2)
+    item.title = "Show HN：Claude Code on GitHub"
+    item.ai_summary = "Claude Managed Agents 在 OpenAI、Amazon Bedrock 和 Hacker News 讨论中被频繁提及。"
+    item.ai_tags = ["OpenAI", "GitHub", "Agent"]
+    item.metadata["feed_name"] = "Hacker News"
+
+    result = summarizer.generate_webhook_item(
+        item,
+        language="zh",
+        index=1,
+        total=1,
+    )
+
+    assert "## [Show HN：Claude Code on GitHub](https://example.com/items/2)" in result
+    assert "Claude Managed Agents 在 OpenAI、Amazon Bedrock 和 Hacker News 讨论中被频繁提及。" in result
+    assert "订阅源 · Hacker News · 4月25日 08:00" in result
+    assert "**标签**: `#OpenAI`, `#GitHub`, `#智能体`" in result

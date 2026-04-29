@@ -10,7 +10,6 @@ _CJK = r"[\u4e00-\u9fff\u3400-\u4dbf]"
 _ASCII = r"[A-Za-z0-9]"
 _ZH_TERM_PATTERNS = (
     (re.compile(r"\bdependency cooldowns\b", re.IGNORECASE), "依赖冷却期"),
-    (re.compile(r"\bClaude\s+Managed\s+Agents\b", re.IGNORECASE), "Claude 托管智能体"),
     (re.compile(r"\bManaged\s+Agents?\b", re.IGNORECASE), "托管智能体"),
     (re.compile(r"\bTsallis\s+Loss\b", re.IGNORECASE), "Tsallis 损失"),
     (re.compile(r"\bPolicy\s+Gradient\b", re.IGNORECASE), "策略梯度"),
@@ -33,6 +32,35 @@ _ZH_COMPACT_PHRASES = (
     "人机交互",
     "侧载",
 )
+_ZH_PROPER_NOUNS = (
+    "OpenAI",
+    "ChatGPT",
+    "Claude",
+    "Claude Code",
+    "Claude Managed Agents",
+    "Anthropic",
+    "Amazon Bedrock",
+    "AWS",
+    "GitHub",
+    "Hacker News",
+    "Show HN",
+    "LocalSend",
+    "AirDrop",
+    "Ghostty",
+    "Warp",
+    "Rust",
+    "Python",
+    "Android",
+    "macOS",
+    "RecursiveMAS",
+    "RLHF",
+    "DV-World",
+    "Teacher Forcing",
+    "GNNExplainer",
+    "GNNShap",
+    "GradCAM",
+    "Tsallis",
+)
 
 
 def _pangu(text: str) -> str:
@@ -45,6 +73,13 @@ def _pangu(text: str) -> str:
 def _normalize_zh_text(text: str) -> str:
     """Translate a few common generic English terms to steadier Chinese phrasing."""
     normalized = str(text or "")
+    protected: dict[str, str] = {}
+    for index, phrase in enumerate(sorted(_ZH_PROPER_NOUNS, key=len, reverse=True)):
+        placeholder = f"__HORIZON_ZH_KEEP_{index}__"
+        if phrase in normalized:
+            normalized = normalized.replace(phrase, placeholder)
+            protected[placeholder] = phrase
+
     for pattern, replacement in _ZH_TERM_PATTERNS:
         normalized = pattern.sub(replacement, normalized)
 
@@ -63,6 +98,9 @@ def _normalize_zh_text(text: str) -> str:
         normalized = re.sub(rf"(?<=[\u4e00-\u9fff])\s+{escaped}", phrase, normalized)
         normalized = re.sub(rf"{escaped}\s+(?=[\u4e00-\u9fff])", phrase, normalized)
     normalized = re.sub(r"(?<=[\u4e00-\u9fff])\s+(?=[\u4e00-\u9fff])", "", normalized)
+
+    for placeholder, phrase in protected.items():
+        normalized = normalized.replace(placeholder, phrase)
     return normalized
 
 
