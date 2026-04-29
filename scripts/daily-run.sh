@@ -82,6 +82,13 @@ if [[ -f .env ]]; then
   set +a
 fi
 
+# Local automation already uses FEISHU_BOT_WEBHOOK_URL for status cards.
+# Reuse the same bot for summary webhook delivery unless a dedicated
+# HORIZON_WEBHOOK_URL is explicitly configured.
+if [[ -z "${HORIZON_WEBHOOK_URL:-}" && -n "${FEISHU_BOT_WEBHOOK_URL:-}" ]]; then
+  export HORIZON_WEBHOOK_URL="$FEISHU_BOT_WEBHOOK_URL"
+fi
+
 if [[ -n "$EXTERNAL_PAGES_URL" ]]; then
   export HORIZON_PAGES_URL="$EXTERNAL_PAGES_URL"
 fi
