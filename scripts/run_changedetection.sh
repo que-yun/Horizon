@@ -21,6 +21,7 @@ LOG_LEVEL="${CHANGEDETECTION_LOG_LEVEL:-INFO}"
 DATASTORE="${CHANGEDETECTION_DATASTORE:-data/changedetection}"
 PID_FILE="$DATASTORE/changedetection.pid"
 LOG_FILE="${CHANGEDETECTION_LOG_FILE:-logs/changedetection.log}"
+READY_TIMEOUT="${CHANGEDETECTION_READY_TIMEOUT:-45}"
 
 ensure_installed() {
   if [[ -x "$PROJECT_DIR/.venv/bin/changedetection.py" ]]; then
@@ -39,11 +40,41 @@ is_running() {
   local pid
   pid="$(cat "$PID_FILE")"
 
-  if [[ -z "$pid" ]]; then
+  if [[ -z "$pid" || ! "$pid" =~ ^[0-9]+$ ]]; then
+    rm -f "$PID_FILE"
     return 1
   fi
 
-  kill -0 "$pid" >/dev/null 2>&1
+  if ! kill -0 "$pid" >/dev/null 2>&1; then
+    rm -f "$PID_FILE"
+    return 1
+  fi
+
+  local command
+  command="$(ps -p "$pid" -o command= 2>/dev/null || true)"
+  if [[ "$command" != *"$PROJECT_DIR/.venv/bin/changedetection.py"* ]]; then
+    rm -f "$PID_FILE"
+    return 1
+  fi
+
+  return 0
+}
+
+wait_until_ready() {
+  local url="http://$HOST:$PORT/"
+  local deadline=$((SECONDS + READY_TIMEOUT))
+
+  while (( SECONDS < deadline )); do
+    if curl -fsS --max-time 2 "$url" >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 1
+  done
+
+  echo "changedetection.io did not become ready on $url within ${READY_TIMEOUT}s"
+  echo "Last log lines:"
+  tail -n 80 "$LOG_FILE" || true
+  return 1
 }
 
 start_service() {
@@ -52,6 +83,7 @@ start_service() {
 
   if is_running; then
     echo "changedetection.io is already running on http://$HOST:$PORT"
+    wait_until_ready
     return 0
   fi
 
@@ -72,6 +104,8 @@ start_service() {
     tail -n 40 "$LOG_FILE" || true
     exit 1
   fi
+
+  wait_until_ready
 
   echo "changedetection.io started on http://$HOST:$PORT"
 }
@@ -103,6 +137,7 @@ stop_service() {
 
 status_service() {
   if is_running; then
+    wait_until_ready
     echo "changedetection.io is running on http://$HOST:$PORT (pid $(cat "$PID_FILE"))"
   else
     echo "changedetection.io is not running"
