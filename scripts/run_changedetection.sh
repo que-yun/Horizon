@@ -22,14 +22,32 @@ DATASTORE="${CHANGEDETECTION_DATASTORE:-data/changedetection}"
 PID_FILE="$DATASTORE/changedetection.pid"
 LOG_FILE="${CHANGEDETECTION_LOG_FILE:-logs/changedetection.log}"
 READY_TIMEOUT="${CHANGEDETECTION_READY_TIMEOUT:-45}"
+CHANGEDETECTION_VENV="${CHANGEDETECTION_VENV:-.runtime/changedetection-venv}"
+CHANGEDETECTION_BIN="$PROJECT_DIR/$CHANGEDETECTION_VENV/bin/changedetection.py"
 
 ensure_installed() {
-  if [[ -x "$PROJECT_DIR/.venv/bin/changedetection.py" ]]; then
+  if [[ -x "$CHANGEDETECTION_BIN" ]]; then
     return 0
   fi
 
-  echo "Installing changedetection.io into .venv ..."
-  "$PROJECT_DIR/.venv/bin/pip" install "changedetection.io==0.54.10"
+  echo "Installing changedetection.io into $CHANGEDETECTION_VENV ..."
+  mkdir -p "$(dirname "$CHANGEDETECTION_VENV")"
+
+  if command -v uv >/dev/null 2>&1; then
+    uv venv --python "$PROJECT_DIR/.venv/bin/python" "$CHANGEDETECTION_VENV"
+    uv pip install --python "$PROJECT_DIR/$CHANGEDETECTION_VENV/bin/python" --prerelease allow "changedetection.io==0.54.10"
+    return 0
+  fi
+
+  if [[ -x "$HOME/.local/bin/uv" ]]; then
+    "$HOME/.local/bin/uv" venv --python "$PROJECT_DIR/.venv/bin/python" "$CHANGEDETECTION_VENV"
+    "$HOME/.local/bin/uv" pip install --python "$PROJECT_DIR/$CHANGEDETECTION_VENV/bin/python" --prerelease allow "changedetection.io==0.54.10"
+    return 0
+  fi
+
+  "$PROJECT_DIR/.venv/bin/python" -m venv "$CHANGEDETECTION_VENV"
+  "$PROJECT_DIR/$CHANGEDETECTION_VENV/bin/python" -m pip install --upgrade pip >/dev/null
+  "$PROJECT_DIR/$CHANGEDETECTION_VENV/bin/python" -m pip install --pre "changedetection.io==0.54.10"
 }
 
 is_running() {
@@ -52,7 +70,7 @@ is_running() {
 
   local command
   command="$(ps -p "$pid" -o command= 2>/dev/null || true)"
-  if [[ "$command" != *"$PROJECT_DIR/.venv/bin/changedetection.py"* ]]; then
+  if [[ "$command" != *"$CHANGEDETECTION_BIN"* ]]; then
     rm -f "$PID_FILE"
     return 1
   fi
@@ -87,7 +105,7 @@ start_service() {
     return 0
   fi
 
-  nohup "$PROJECT_DIR/.venv/bin/changedetection.py" \
+  nohup "$CHANGEDETECTION_BIN" \
     -d "$DATASTORE" \
     -C \
     -h "$HOST" \
