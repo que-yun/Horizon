@@ -210,7 +210,7 @@
       {
         "name": "TechCrunch AI",
         "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
-        "enabled": true,
+        "enabled": false,
         "category": "ai-news"
       },
       {
