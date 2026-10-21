@@ -2,12 +2,12 @@
 
 import asyncio
 import os
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from tenacity import retry, stop_after_attempt, wait_exponential
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, MofNCompleteColumn
 
 from .client import AIClient
-from .prompts import CONTENT_ANALYSIS_SYSTEM, CONTENT_ANALYSIS_USER
+from .prompts import CONTENT_ANALYSIS_BATCH_USER, CONTENT_ANALYSIS_SYSTEM, CONTENT_ANALYSIS_USER
 from .utils import parse_json_response
 from ..models import ContentItem
 
@@ -19,6 +19,9 @@ class ContentAnalyzer:
         self.client = ai_client
         self.analysis_timeout = float(os.getenv("HORIZON_ANALYSIS_TIMEOUT_SECONDS", "20"))
         self.analysis_max_tokens = int(os.getenv("HORIZON_ANALYSIS_MAX_TOKENS", "600"))
+        # Items scored per AI request. 1 keeps the original one-request-per-item
+        # behaviour; larger values cut per-request prompt overhead.
+        self.group_size = max(1, int(os.getenv("HORIZON_ANALYSIS_BATCH_SIZE", "1")))
 
     @staticmethod
     def _parse_json_response(response: str) -> Optional[dict]:
@@ -44,9 +47,16 @@ class ContentAnalyzer:
         ) as progress:
             task = progress.add_task("Analyzing", total=len(items))
 
-            for i in range(0, len(items), batch_size):
-                batch = items[i:i + batch_size]
-                for item in batch:
+            step = self.group_size if self.group_size > 1 else batch_size
+            for i in range(0, len(items), step):
+                batch = items[i:i + step]
+                pending = batch
+                if self.group_size > 1:
+                    pending = await self._analyze_group(batch)
+                    pending_ids = {id(item) for item in pending}
+                    progress.advance(task, len(batch) - len(pending))
+                    analyzed_items.extend(item for item in batch if id(item) not in pending_ids)
+                for item in pending:
                     try:
                         await self._analyze_item(item)
                         analyzed_items.append(item)
@@ -60,16 +70,62 @@ class ContentAnalyzer:
 
         return analyzed_items
 
-    @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(min=2, max=10)
-    )
-    async def _analyze_item(self, item: ContentItem) -> None:
-        """Analyze a single content item.
+    async def _analyze_group(self, items: List[ContentItem]) -> List[ContentItem]:
+        """Score several items in one request.
 
-        Args:
-            item: Content item to analyze (modified in-place)
+        Returns the items that did not get a usable result, so the caller can
+        fall back to scoring them one by one.
         """
+        blocks = []
+        for index, item in enumerate(items):
+            content_section, discussion_section = self._prepare_sections(item)
+            blocks.append(
+                f"[{index}]\n"
+                f"Title: {item.title}\n"
+                f"Source: {item.source_type.value}\n"
+                f"Author: {item.author or 'Unknown'}\n"
+                f"URL: {item.url}\n"
+                f"{content_section}\n"
+                f"{discussion_section}".rstrip()
+            )
+
+        try:
+            response = await asyncio.wait_for(
+                self.client.complete(
+                    system=CONTENT_ANALYSIS_SYSTEM,
+                    user=CONTENT_ANALYSIS_BATCH_USER.format(
+                        count=len(items), items="\n\n".join(blocks)
+                    ),
+                    max_tokens=self.analysis_max_tokens * len(items),
+                ),
+                timeout=self.analysis_timeout * len(items),
+            )
+        except Exception as e:
+            print(f"Grouped analysis failed for {len(items)} items, falling back to per-item: {e}")
+            return list(items)
+
+        result = self._parse_json_response(response)
+        entries = result.get("items", []) if isinstance(result, dict) else []
+        done = set()
+        for entry in entries:
+            try:
+                index = int(entry.get("index"))
+                score = float(entry.get("score"))
+            except (AttributeError, TypeError, ValueError):
+                continue
+            if 0 <= index < len(items) and index not in done:
+                entry["score"] = score
+                self._apply_result(items[index], entry)
+                done.add(index)
+
+        missing = [item for index, item in enumerate(items) if index not in done]
+        if missing:
+            print(f"Grouped analysis returned no result for {len(missing)} items, falling back to per-item")
+        return missing
+
+    @staticmethod
+    def _prepare_sections(item: ContentItem) -> Tuple[str, str]:
+        """Build the content and discussion prompt sections for an item."""
         # Prepare content section
         content_section = ""
         if item.content:
@@ -113,6 +169,27 @@ class ContentAnalyzer:
             discussion_parts.append(f"Community Note: {meta['community_note']}")
 
         discussion_section = "\n".join(discussion_parts) if discussion_parts else ""
+        return content_section, discussion_section
+
+    @staticmethod
+    def _apply_result(item: ContentItem, result: dict) -> None:
+        """Copy an analysis result onto the item."""
+        item.ai_score = float(result.get("score", 0))
+        item.ai_reason = result.get("reason", "")
+        item.ai_summary = result.get("summary", item.title)
+        item.ai_tags = result.get("tags", [])
+
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(min=2, max=10)
+    )
+    async def _analyze_item(self, item: ContentItem) -> None:
+        """Analyze a single content item.
+
+        Args:
+            item: Content item to analyze (modified in-place)
+        """
+        content_section, discussion_section = self._prepare_sections(item)
 
         # Generate user prompt
         user_prompt = CONTENT_ANALYSIS_USER.format(
@@ -145,7 +222,4 @@ class ContentAnalyzer:
             return
 
         # Update item with analysis results
-        item.ai_score = float(result.get("score", 0))
-        item.ai_reason = result.get("reason", "")
-        item.ai_summary = result.get("summary", item.title)
-        item.ai_tags = result.get("tags", [])
+        self._apply_result(item, result)

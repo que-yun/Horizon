@@ -1,5 +1,6 @@
 """Unit tests for daily summary rendering."""
 
+import asyncio
 from datetime import datetime, timezone
 
 from src.ai.summarizer import DailySummarizer
@@ -95,3 +96,39 @@ def test_generate_webhook_item_preserves_proper_nouns():
     assert "Claude Managed Agents 在 OpenAI、Amazon Bedrock 和 Hacker News 讨论中被频繁提及。" in result
     assert "订阅源 · Hacker News · 4月25日 08:00" in result
     assert "**标签**: `#OpenAI`, `#GitHub`, `#智能体`" in result
+
+
+def _make_raw_item(idx: int) -> ContentItem:
+    return ContentItem(
+        id=f"rss:raw-{idx}",
+        source_type=SourceType.RSS,
+        title=f"Raw Item {idx}",
+        url=f"https://example.com/raw/{idx}",
+        content="content",
+        author="tester",
+        published_at=datetime(2026, 4, 25, 8, 0, tzinfo=timezone.utc),
+        metadata={"feed_name": "Official Blog", "title_zh": f"原文条目 {idx}"},
+    )
+
+
+def test_generate_summary_lists_raw_items_before_ai_picks():
+    summarizer = DailySummarizer()
+
+    result = asyncio.run(summarizer.generate_summary(
+        [_make_item(1)], "2026-04-25", 10, language="zh", raw_items=[_make_raw_item(1)]
+    ))
+
+    raw_pos = result.index("官方与作者原文")
+    assert "- [原文条目 1](https://example.com/raw/1) · Official Blog" in result
+    assert raw_pos < result.index("## 🤖 AI 精选") < result.index("1. [Important Item 1](#item-1)")
+
+
+def test_generate_summary_keeps_raw_items_when_no_ai_picks():
+    summarizer = DailySummarizer()
+
+    result = asyncio.run(summarizer.generate_summary(
+        [], "2026-04-25", 10, language="zh", raw_items=[_make_raw_item(1)]
+    ))
+
+    assert "已分析 10 条内容，但没有条目" in result
+    assert "原文条目 1" in result

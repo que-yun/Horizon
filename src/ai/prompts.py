@@ -81,6 +81,30 @@ Respond with valid JSON only:
   "tags": ["<tag1>", "<tag2>", ...]
 }}"""
 
+CONTENT_ANALYSIS_BATCH_USER = """Analyze each of the following {count} content items independently.
+Score every item on its own merits using the same criteria; do not rank items against each other.
+
+For each item provide:
+- score (0-10): Importance score
+- reason: Brief explanation for the score (mention discussion quality if comments are provided)
+- summary: One-sentence summary of the content
+- tags: Relevant topic tags (3-5 tags)
+
+{items}
+
+Respond with valid JSON only, one entry per item, using the item's index:
+{{
+  "items": [
+    {{
+      "index": <item index>,
+      "score": <number>,
+      "reason": "<explanation>",
+      "summary": "<one-sentence-summary>",
+      "tags": ["<tag1>", "<tag2>", ...]
+    }}
+  ]
+}}"""
+
 CONTENT_LOCALIZATION_SYSTEM = """You are a precise technical translator for a Chinese engineering daily briefing.
 
 Translate titles, summaries, and tags into natural Simplified Chinese.
