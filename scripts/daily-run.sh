@@ -210,8 +210,23 @@ log "Installing/updating dependencies..."
 sync_dependencies "$UV_BIN"
 
 FAILED_STEP="rsshub"
-log "Ensuring local RSSHub is running..."
-ensure_rsshub
+USES_RSSHUB="$(python3 - <<'PY'
+import json
+from pathlib import Path
+
+config = json.loads(Path("data/config.json").read_text(encoding="utf-8"))
+print(any(
+    s.get("enabled", True) and "127.0.0.1:1200" in s.get("url", "")
+    for s in config["sources"].get("rss", [])
+))
+PY
+)"
+if [[ "$USES_RSSHUB" == "True" ]]; then
+  log "Ensuring local RSSHub is running..."
+  ensure_rsshub
+else
+  log "No enabled RSSHub sources, skipping RSSHub."
+fi
 
 FAILED_STEP="changedetection"
 log "Ensuring local changedetection.io is running..."

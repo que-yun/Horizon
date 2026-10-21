@@ -24,7 +24,16 @@ except ImportError:  # pragma: no cover - optional dependency for local runs
 
 ROOT = Path(__file__).resolve().parents[1]
 ITEM_RE = re.compile(r"^\d+\.\s+\[(.+?)\]\(#item-\d+\)")
-COUNT_RE = re.compile(r"From\s+(\d+)\s+items,\s+(\d+)\s+important")
+# (all_count, selected_count) header patterns emitted by src/ai/summarizer.py
+COUNT_PATTERNS = [
+    (re.compile(r"From\s+(\d+)\s+items,\s+(\d+)\s+important"), (1, 2)),
+    (re.compile(r"Selected\s+(\d+)\s+important items from\s+(\d+)"), (2, 1)),
+    (re.compile(r"从\s*(\d+)\s*条内容中筛选出\s*(\d+)\s*条"), (1, 2)),
+]
+EMPTY_PATTERNS = [
+    re.compile(r"已分析\s*(\d+)\s*条内容，但没有条目"),
+    re.compile(r"Analyzed\s+(\d+)\s+items, but none met"),
+]
 
 
 def parse_summary(summary_path: Path) -> dict[str, Any]:
@@ -39,11 +48,21 @@ def parse_summary(summary_path: Path) -> dict[str, Any]:
         line = raw_line.strip()
         if not line:
             continue
-        count_match = COUNT_RE.search(line)
-        if count_match:
-            all_count = int(count_match.group(1))
-            selected_count = int(count_match.group(2))
-            continue
+        if selected_count is None:
+            for pattern, (all_group, selected_group) in COUNT_PATTERNS:
+                count_match = pattern.search(line)
+                if count_match:
+                    all_count = int(count_match.group(all_group))
+                    selected_count = int(count_match.group(selected_group))
+                    break
+            for pattern in EMPTY_PATTERNS:
+                empty_match = pattern.search(line)
+                if empty_match:
+                    all_count = int(empty_match.group(1))
+                    selected_count = 0
+                    break
+            if selected_count is not None:
+                continue
         item_match = ITEM_RE.match(line)
         if item_match and len(top_items) < 3:
             top_items.append(item_match.group(1))
@@ -90,12 +109,29 @@ def build_card(
     source_url: str,
 ) -> dict[str, Any]:
     is_success = status == "success"
-    header_template = "green" if is_success else "red"
-    title = f"Horizon 日报{'成功' if is_success else '失败'} · {date_str}"
+    # A run that finishes but selects nothing usually means AI scoring or
+    # fetching failed (e.g. a retired model name), so flag it instead of
+    # reporting a green success.
+    is_empty = is_success and (
+        summary_info.get("selected_count") == 0
+        or (summary_info.get("selected_count") is None and not summary_info.get("top_items"))
+    )
+    if is_empty:
+        header_template, state = "orange", "异常"
+    elif is_success:
+        header_template, state = "green", "成功"
+    else:
+        header_template, state = "red", "失败"
+    title = f"Horizon 日报{state} · {date_str}"
 
-    lines = [f"**状态**：{'成功' if is_success else '失败'}"]
+    lines = [f"**状态**：{state}"]
     if message:
         lines.append(f"**说明**：{message}")
+    if is_empty:
+        lines.append(
+            "**提示**：今日 0 条入选，通常是 AI 模型调用失败或信息源抓取失败，"
+            "请查看 logs/launchd.stdout.log 中的 Error 行"
+        )
 
     if is_success and summary_info.get("selected_count") is not None:
         lines.append(

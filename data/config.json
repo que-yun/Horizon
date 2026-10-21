@@ -83,7 +83,7 @@
       {
         "name": "OpenAI Cookbook Commits",
         "url": "https://github.com/openai/openai-cookbook/commits/main.atom",
-        "enabled": true,
+        "enabled": false,
         "category": "official-openai"
       },
       {
@@ -113,13 +113,13 @@
       {
         "name": "Hugging Face Daily Papers (RSSHub)",
         "url": "http://127.0.0.1:1200/huggingface/daily-papers/week/50",
-        "enabled": true,
+        "enabled": false,
         "category": "papers"
       },
       {
         "name": "arXiv AI/LLM",
         "url": "https://export.arxiv.org/api/query?search_query=cat:cs.AI+OR+cat:cs.CL+OR+cat:cs.LG&sortBy=lastUpdatedDate&sortOrder=descending&start=0&max_results=20",
-        "enabled": true,
+        "enabled": false,
         "category": "papers"
       },
       {
@@ -131,7 +131,7 @@
       {
         "name": "AI 日报 (The AI Daily 中文版)",
         "url": "https://aidaily.fyi/zh/feed.xml",
-        "enabled": true,
+        "enabled": false,
         "category": "daily-digest"
       },
       {
@@ -197,13 +197,13 @@
       {
         "name": "The Verge AI",
         "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
-        "enabled": true,
+        "enabled": false,
         "category": "ai-news"
       },
       {
         "name": "Ars Technica AI",
         "url": "https://arstechnica.com/ai/feed/",
-        "enabled": true,
+        "enabled": false,
         "category": "ai-news"
       }
     ],
