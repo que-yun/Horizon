@@ -66,6 +66,10 @@ class HorizonOrchestrator:
 
             # 2. Fetch content from all sources
             all_items = await self.fetch_all_sources(since)
+            if os.getenv("HORIZON_WINDOW_END", "").strip():
+                window_end = self._window_end()
+                all_items = [item for item in all_items if item.published_at <= window_end]
+                self.console.print(f"⏱️  Window ends at {window_end.isoformat()} (backfill)")
             self.console.print(f"📥 Fetched {len(all_items)} items from all sources\n")
 
             if not all_items:
@@ -282,13 +286,18 @@ class HorizonOrchestrator:
 
             raise
 
+    @staticmethod
+    def _window_end() -> datetime:
+        """End of the fetch window: HORIZON_WINDOW_END (ISO 8601, for backfills) or now."""
+        raw = os.getenv("HORIZON_WINDOW_END", "").strip()
+        if not raw:
+            return datetime.now(timezone.utc)
+        end = datetime.fromisoformat(raw)
+        return end if end.tzinfo else end.astimezone()
+
     def _determine_time_window(self, force_hours: int = None) -> datetime:
-        if force_hours:
-            since = datetime.now(timezone.utc) - timedelta(hours=force_hours)
-        else:
-            hours = self.config.filtering.time_window_hours
-            since = datetime.now(timezone.utc) - timedelta(hours=hours)
-        return since
+        hours = force_hours or self.config.filtering.time_window_hours
+        return self._window_end() - timedelta(hours=hours)
 
     async def fetch_all_sources(self, since: datetime) -> List[ContentItem]:
         """Fetch content from all configured sources.
