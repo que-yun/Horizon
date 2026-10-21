@@ -291,7 +291,9 @@ class HorizonOrchestrator:
         Returns:
             List[ContentItem]: All fetched items
         """
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        # Some feeds (e.g. qbitai.com) reject httpx's default User-Agent with 403.
+        headers = {"User-Agent": "Horizon/1.0 (tech news aggregator)"}
+        async with httpx.AsyncClient(timeout=30.0, headers=headers) as client:
             tasks = []
 
             # GitHub sources

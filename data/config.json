@@ -127,6 +127,84 @@
         "url": "http://127.0.0.1:15000/rss?token=${CHANGEDETECTION_RSS_TOKEN}&tag=semantic-scholar",
         "enabled": false,
         "category": "papers"
+      },
+      {
+        "name": "AI 日报 (The AI Daily 中文版)",
+        "url": "https://aidaily.fyi/zh/feed.xml",
+        "enabled": true,
+        "category": "daily-digest"
+      },
+      {
+        "name": "Google DeepMind Blog",
+        "url": "https://deepmind.google/blog/rss.xml",
+        "enabled": true,
+        "category": "official-updates"
+      },
+      {
+        "name": "Hugging Face Blog",
+        "url": "https://huggingface.co/blog/feed.xml",
+        "enabled": true,
+        "category": "official-updates"
+      },
+      {
+        "name": "Claude Blog (rss-feeds)",
+        "url": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_claude.xml",
+        "enabled": true,
+        "category": "official-updates"
+      },
+      {
+        "name": "Anthropic News (rss-feeds)",
+        "url": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_news.xml",
+        "enabled": true,
+        "category": "official-updates"
+      },
+      {
+        "name": "Import AI",
+        "url": "https://importai.substack.com/feed",
+        "enabled": true,
+        "category": "ai-analysis"
+      },
+      {
+        "name": "Interconnects (Nathan Lambert)",
+        "url": "https://www.interconnects.ai/feed",
+        "enabled": true,
+        "category": "ai-analysis"
+      },
+      {
+        "name": "One Useful Thing (Ethan Mollick)",
+        "url": "https://www.oneusefulthing.org/feed",
+        "enabled": true,
+        "category": "ai-analysis"
+      },
+      {
+        "name": "The Decoder",
+        "url": "https://the-decoder.com/feed/",
+        "enabled": true,
+        "category": "ai-news"
+      },
+      {
+        "name": "量子位",
+        "url": "https://www.qbitai.com/feed",
+        "enabled": true,
+        "category": "ai-news-zh"
+      },
+      {
+        "name": "TechCrunch AI",
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "enabled": true,
+        "category": "ai-news"
+      },
+      {
+        "name": "The Verge AI",
+        "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+        "enabled": true,
+        "category": "ai-news"
+      },
+      {
+        "name": "Ars Technica AI",
+        "url": "https://arstechnica.com/ai/feed/",
+        "enabled": true,
+        "category": "ai-news"
       }
     ],
     "reddit": {
