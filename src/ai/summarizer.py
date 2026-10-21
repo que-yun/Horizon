@@ -1,7 +1,7 @@
 """Daily summary generation — pure programmatic rendering."""
 
 import re
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from ..models import ContentItem
 
@@ -175,6 +175,7 @@ class DailySummarizer:
         date: str,
         total_fetched: int,
         language: str = "en",
+        raw_items: Optional[List[ContentItem]] = None,
     ) -> str:
         """Generate daily summary in Markdown format.
 
@@ -185,14 +186,16 @@ class DailySummarizer:
             date: Date string (YYYY-MM-DD)
             total_fetched: Total number of items fetched before filtering
             language: Output language, either "en" or "zh"
+            raw_items: Items from sources with "ai": false, listed before the AI picks
 
         Returns:
             str: Markdown formatted summary
         """
         labels = LABELS.get(language, LABELS["en"])
+        raw_section = self._format_raw_section(raw_items or [], language)
 
         if not items:
-            return self._generate_empty_summary(date, total_fetched, labels)
+            return self._generate_empty_summary(date, total_fetched, labels, raw_section)
 
         lead = (
             f"> 从 {total_fetched} 条内容中筛选出 {len(items)} 条重要资讯\n\n"
@@ -204,6 +207,9 @@ class DailySummarizer:
             f"{lead}"
             "---\n\n"
         )
+        if raw_section:
+            ai_heading = "## 🤖 AI 精选\n\n" if language == "zh" else "## 🤖 AI picks\n\n"
+            header += raw_section + "---\n\n" + ai_heading
 
         # TOC
         toc_entries = []
@@ -357,7 +363,28 @@ class DailySummarizer:
 
         return "\n".join(lines) + "\n\n"
 
-    def _generate_empty_summary(self, date: str, total_fetched: int, labels: dict) -> str:
+    def _format_raw_section(self, items: List[ContentItem], language: str) -> str:
+        """List items from non-AI sources as title links, newest first."""
+        if not items:
+            return ""
+        if language == "zh":
+            heading = f"## 📌 官方与作者原文（{len(items)} 条，未经 AI 筛选）\n\n"
+        else:
+            heading = f"## 📌 Official & author posts ({len(items)}, not AI-filtered)\n\n"
+        lines = []
+        for item in items:
+            title = str(item.metadata.get(f"title_{language}") or item.title)
+            title = title.replace("[", "(").replace("]", ")")
+            if language == "zh":
+                title = _pangu(_normalize_zh_text(title))
+            source = item.metadata.get("feed_name") or item.metadata.get("repo") or item.author or ""
+            timestamp = self._format_timestamp(item.published_at, language)
+            lines.append(f"- [{title}]({item.url}) · {source} · {timestamp}")
+        return heading + "\n".join(lines) + "\n\n"
+
+    def _generate_empty_summary(
+        self, date: str, total_fetched: int, labels: dict, raw_section: str = ""
+    ) -> str:
         """Generate summary when no high-scoring items were found."""
         lead = (
             f"已分析 {total_fetched} 条内容，但没有条目达到当前重要性阈值。\n\n"
@@ -367,6 +394,7 @@ class DailySummarizer:
         return (
             f"# {labels['header']} - {date}\n\n"
             f"> {lead}"
+            + (f"---\n\n{raw_section}---\n\n" if raw_section else "")
             + labels["empty_body"]
         )
 

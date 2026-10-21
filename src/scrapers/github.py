@@ -56,14 +56,16 @@ class GitHubScraper(BaseScraper):
             if not source.enabled:
                 continue
 
+            source_items: List[ContentItem] = []
             if source.type == "user_events" and source.username:
-                user_items = await self._fetch_user_events(source.username, since)
-                items.extend(user_items)
+                source_items = await self._fetch_user_events(source.username, since)
             elif source.type == "repo_releases" and source.owner and source.repo:
-                release_items = await self._fetch_repo_releases(
+                source_items = await self._fetch_repo_releases(
                     source.owner, source.repo, since
                 )
-                items.extend(release_items)
+            for item in source_items:
+                item.metadata["skip_ai"] = not source.ai
+            items.extend(source_items)
 
         return items
 

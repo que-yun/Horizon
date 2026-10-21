@@ -129,7 +129,7 @@ def build_card(
         lines.append(f"**说明**：{message}")
     if is_empty:
         lines.append(
-            "**提示**：今日 0 条入选，通常是 AI 模型调用失败或信息源抓取失败，"
+            "**提示**：今日 AI 精选 0 条，通常是 AI 模型调用失败或信息源抓取失败，"
             "请查看 logs/launchd.stdout.log 中的 Error 行"
         )
 

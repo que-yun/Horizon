@@ -65,6 +65,7 @@ class GitHubSourceConfig(BaseModel):
     owner: Optional[str] = None
     repo: Optional[str] = None
     enabled: bool = True
+    ai: bool = True  # False: skip AI scoring, list items as-is (titles still localized)
 
 
 class HackerNewsConfig(BaseModel):
@@ -82,6 +83,7 @@ class RSSSourceConfig(BaseModel):
     url: HttpUrl
     enabled: bool = True
     category: Optional[str] = None
+    ai: bool = True  # False: skip AI scoring, list items as-is (titles still localized)
 
 
 class RedditSubredditConfig(BaseModel):

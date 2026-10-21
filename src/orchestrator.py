@@ -80,6 +80,13 @@ class HorizonOrchestrator:
                     f"→ {len(merged_items)} unique items\n"
                 )
 
+            # 3.5 Sources configured with "ai": false bypass scoring and are listed as-is
+            raw_items = [item for item in merged_items if item.metadata.get("skip_ai")]
+            merged_items = [item for item in merged_items if not item.metadata.get("skip_ai")]
+            raw_items.sort(key=lambda x: x.published_at, reverse=True)
+            if raw_items:
+                self.console.print(f"📌 {len(raw_items)} items from non-AI sources will be listed as-is\n")
+
             # 4. Analyze with AI
             analyzed_items = await self._analyze_content(merged_items)
             self.console.print(f"🤖 Analyzed {len(analyzed_items)} items with AI\n")
@@ -119,12 +126,15 @@ class HorizonOrchestrator:
 
             # 6.5 Add localized fallback fields so non-English pages stay readable
             await self._localize_important_items(important_items)
+            await self._localize_important_items(raw_items)
 
             # 7. Generate and save daily summaries for each configured language
             today = os.getenv("HORIZON_RUN_DATE") or datetime.now().astimezone().strftime("%Y-%m-%d")
             for lang in self.config.ai.languages:
                 summarizer = DailySummarizer()
-                summary = await summarizer.generate_summary(important_items, today, len(all_items), language=lang)
+                summary = await summarizer.generate_summary(
+                    important_items, today, len(all_items), language=lang, raw_items=raw_items
+                )
 
                 # Save to data/summaries/
                 summary_path = self.storage.save_daily_summary(today, summary, language=lang)

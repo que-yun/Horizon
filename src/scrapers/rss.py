@@ -105,6 +105,7 @@ class RSSScraper(BaseScraper):
                     metadata={
                         "feed_name": source.name,
                         "category": source.category,
+                        "skip_ai": not source.ai,
                         "tags": [tag.term for tag in entry.get("tags", [])],
                     }
                 )

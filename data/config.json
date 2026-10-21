@@ -17,25 +17,29 @@
         "type": "repo_releases",
         "owner": "langchain-ai",
         "repo": "langgraph",
-        "enabled": true
+        "enabled": true,
+        "ai": false
       },
       {
         "type": "repo_releases",
         "owner": "temporalio",
         "repo": "temporal",
-        "enabled": true
+        "enabled": true,
+        "ai": false
       },
       {
         "type": "repo_releases",
         "owner": "qdrant",
         "repo": "qdrant",
-        "enabled": true
+        "enabled": true,
+        "ai": false
       },
       {
         "type": "repo_releases",
         "owner": "open-telemetry",
         "repo": "opentelemetry-collector",
-        "enabled": true
+        "enabled": true,
+        "ai": false
       }
     ],
     "hackernews": {
@@ -54,13 +58,15 @@
         "name": "Chip Huyen",
         "url": "https://huyenchip.com/feed.xml",
         "enabled": true,
-        "category": "ai-systems"
+        "category": "ai-systems",
+        "ai": false
       },
       {
         "name": "Lilian Weng",
         "url": "https://lilianweng.github.io/index.xml",
         "enabled": true,
-        "category": "ai-research"
+        "category": "ai-research",
+        "ai": false
       },
       {
         "name": "Latent Space",
@@ -72,13 +78,15 @@
         "name": "OpenAI News",
         "url": "https://openai.com/news/rss.xml",
         "enabled": true,
-        "category": "official-updates"
+        "category": "official-updates",
+        "ai": false
       },
       {
         "name": "OpenAI Developers",
         "url": "https://developers.openai.com/rss.xml",
         "enabled": true,
-        "category": "official-openai"
+        "category": "official-openai",
+        "ai": false
       },
       {
         "name": "OpenAI Cookbook Commits",
@@ -90,25 +98,29 @@
         "name": "Go Blog",
         "url": "https://go.dev/blog/feed.atom",
         "enabled": true,
-        "category": "go-backend"
+        "category": "go-backend",
+        "ai": false
       },
       {
         "name": "Anthropic Engineering (rss-feeds)",
         "url": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_engineering.xml",
         "enabled": true,
-        "category": "official-updates"
+        "category": "official-updates",
+        "ai": false
       },
       {
         "name": "Anthropic Research (rss-feeds)",
         "url": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_research.xml",
         "enabled": true,
-        "category": "official-updates"
+        "category": "official-updates",
+        "ai": false
       },
       {
         "name": "Anthropic Docs Release Notes (ChangeDetection)",
         "url": "http://127.0.0.1:15000/rss?token=${CHANGEDETECTION_RSS_TOKEN}&tag=anthropic-docs",
         "enabled": true,
-        "category": "official-updates"
+        "category": "official-updates",
+        "ai": false
       },
       {
         "name": "Hugging Face Daily Papers (RSSHub)",
@@ -138,43 +150,50 @@
         "name": "Google DeepMind Blog",
         "url": "https://deepmind.google/blog/rss.xml",
         "enabled": true,
-        "category": "official-updates"
+        "category": "official-updates",
+        "ai": false
       },
       {
         "name": "Hugging Face Blog",
         "url": "https://huggingface.co/blog/feed.xml",
         "enabled": true,
-        "category": "official-updates"
+        "category": "official-updates",
+        "ai": false
       },
       {
         "name": "Claude Blog (rss-feeds)",
         "url": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_claude.xml",
         "enabled": true,
-        "category": "official-updates"
+        "category": "official-updates",
+        "ai": false
       },
       {
         "name": "Anthropic News (rss-feeds)",
         "url": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_news.xml",
         "enabled": true,
-        "category": "official-updates"
+        "category": "official-updates",
+        "ai": false
       },
       {
         "name": "Import AI",
         "url": "https://importai.substack.com/feed",
         "enabled": true,
-        "category": "ai-analysis"
+        "category": "ai-analysis",
+        "ai": false
       },
       {
         "name": "Interconnects (Nathan Lambert)",
         "url": "https://www.interconnects.ai/feed",
         "enabled": true,
-        "category": "ai-analysis"
+        "category": "ai-analysis",
+        "ai": false
       },
       {
         "name": "One Useful Thing (Ethan Mollick)",
         "url": "https://www.oneusefulthing.org/feed",
         "enabled": true,
-        "category": "ai-analysis"
+        "category": "ai-analysis",
+        "ai": false
       },
       {
         "name": "The Decoder",
@@ -219,7 +238,7 @@
     }
   },
   "filtering": {
-    "ai_score_threshold": 6.8,
+    "ai_score_threshold": 8.0,
     "time_window_hours": 24
   },
   "webhook": {
