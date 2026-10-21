@@ -2,7 +2,7 @@
   "version": "1.0",
   "ai": {
     "provider": "openai",
-    "model": "gpt-5.4",
+    "model": "gpt-5.6-terra",
     "base_url": "http://127.0.0.1:15721/v1",
     "api_key_env": "OPENAI_API_KEY",
     "temperature": 0.2,
@@ -93,14 +93,14 @@
         "category": "go-backend"
       },
       {
-        "name": "Anthropic Engineering (RSSHub)",
-        "url": "http://127.0.0.1:1200/anthropic/engineering",
+        "name": "Anthropic Engineering (rss-feeds)",
+        "url": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_engineering.xml",
         "enabled": true,
         "category": "official-updates"
       },
       {
-        "name": "Anthropic Research (RSSHub)",
-        "url": "http://127.0.0.1:1200/anthropic/research",
+        "name": "Anthropic Research (rss-feeds)",
+        "url": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_research.xml",
         "enabled": true,
         "category": "official-updates"
       },
