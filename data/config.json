@@ -225,7 +225,7 @@
   "webhook": {
     "enabled": true,
     "url_env": "HORIZON_WEBHOOK_URL",
-    "delivery": "summary_and_items",
+    "delivery": "summary",
     "languages": [
       "zh"
     ],
@@ -247,7 +247,7 @@
           "elements": [
             {
               "tag": "markdown",
-              "content": "#{summary}"
+              "content": "#{summary?limit=5000&split=---}"
             }
           ]
         }
